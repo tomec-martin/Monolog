@@ -37,6 +37,7 @@ class MonologExtension extends CompilerExtension
 		'processors' => array(),
 		'name' => 'app',
 		'hookToTracy' => TRUE,
+		'tracyBaseUrl' => NULL,
 		// 'registerFallback' => TRUE,
 	);
 
@@ -120,6 +121,16 @@ class MonologExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('processor.priorityProcessor'))
 			->setClass('Kdyby\Monolog\Processor\PriorityProcessor')
 			->addTag(self::TAG_PROCESSOR, 20);
+
+		$builder->addDefinition($this->prefix('processor.tracyException'))
+			->setClass('Kdyby\Monolog\Processor\TracyExceptionProcessor', [$builder->expand('%logDir%')])
+			->addTag(self::TAG_PROCESSOR, 100);
+
+		if ($config['tracyBaseUrl'] !== NULL) {
+			$builder->addDefinition($this->prefix('processor.tracyBaseUrl'))
+				->setClass('Kdyby\Monolog\Processor\TracyUrlProcessor', [$config['tracyBaseUrl']])
+				->addTag(self::TAG_PROCESSOR, 10);
+		}
 
 		foreach ($config['processors'] as $processorName => $implementation) {
 			$this->compiler->parseServices($builder, array(

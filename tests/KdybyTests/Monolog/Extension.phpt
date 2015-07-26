@@ -81,11 +81,18 @@ class ExtensionTest extends Tester\TestCase
 		$logger->addError('logger message 3');
 		$logger->addError('logger message 4', array('channel' => 'custom'));
 
+		$logger->addWarning('exception message 1', ['exception' => new \Exception('exception message 1')]);
+
 		Assert::match(
 			'[%a%] tracy message 1 {"at":"%a%"} []' . "\n" .
 			'[%a%] Exception: tracy exception message 2 in %a%:%d% {"at":"%a%","tracy":"exception-%a%.html"} []' . "\n" .
 			'[%a%] logger message 1 [] []',
 			file_get_contents(TEMP_DIR . '/info.log')
+		);
+
+		Assert::match(
+			'[%a%] exception message 1 {"tracy":"exception-%a%.html"} []',
+			file_get_contents(TEMP_DIR . '/warning.log')
 		);
 
 		Assert::match(
@@ -101,7 +108,7 @@ class ExtensionTest extends Tester\TestCase
 			file_get_contents(TEMP_DIR . '/custom.log')
 		);
 
-		Assert::count(2, glob(TEMP_DIR . '/exception-*.html'));
+		Assert::count(3, glob(TEMP_DIR . '/exception-*.html'));
 	}
 
 
@@ -124,8 +131,10 @@ class ExtensionTest extends Tester\TestCase
 		$dic = $this->createContainer('processors');
 		$logger = $dic->getByType('Monolog\Logger');
 		$processors = $logger->getProcessors();
-		Assert::count(4, $processors);
+		Assert::count(6, $processors);
+		Assert::type('Kdyby\Monolog\Processor\TracyExceptionProcessor', array_shift($processors));
 		Assert::type('Kdyby\Monolog\Processor\PriorityProcessor', array_shift($processors));
+		Assert::type('Kdyby\Monolog\Processor\TracyUrlProcessor', array_shift($processors));
 		Assert::type('Monolog\Processor\WebProcessor', array_shift($processors));
 		Assert::type('Monolog\Processor\ProcessIdProcessor', array_shift($processors));
 		Assert::type('Monolog\Processor\GitProcessor', array_shift($processors));
