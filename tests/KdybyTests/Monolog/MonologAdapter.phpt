@@ -11,7 +11,6 @@
 namespace KdybyTests\Monolog;
 
 use Kdyby;
-use Mockista\MockInterface;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Nette;
@@ -34,7 +33,7 @@ class MonologAdapterTest extends Tester\TestCase
 	protected $adapter;
 
 	/**
-	 * @var Logger|MockInterface
+	 * @var Logger
 	 */
 	protected $monolog;
 
