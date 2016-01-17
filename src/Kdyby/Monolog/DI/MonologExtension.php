@@ -31,6 +31,7 @@ class MonologExtension extends CompilerExtension
 
 	const TAG_HANDLER = 'monolog.handler';
 	const TAG_PROCESSOR = 'monolog.processor';
+	const TAG_PRIORITY = 'monolog.priority';
 
 	private $defaults = array(
 		'handlers' => array(),
@@ -104,7 +105,8 @@ class MonologExtension extends CompilerExtension
 			));
 
 			$builder->getDefinition($serviceName)
-				->addTag(self::TAG_HANDLER, is_numeric($handlerName) ? $handlerName : 0);
+				->addTag(self::TAG_HANDLER)
+				->addTag(self::TAG_PRIORITY, is_numeric($handlerName) ? $handlerName : 0);
 		}
 	}
 
@@ -120,16 +122,19 @@ class MonologExtension extends CompilerExtension
 		// change channel name to priority if available
 		$builder->addDefinition($this->prefix('processor.priorityProcessor'))
 			->setClass('Kdyby\Monolog\Processor\PriorityProcessor')
-			->addTag(self::TAG_PROCESSOR, 20);
+			->addTag(self::TAG_PROCESSOR)
+			->addTag(self::TAG_PRIORITY, 20);
 
 		$builder->addDefinition($this->prefix('processor.tracyException'))
 			->setClass('Kdyby\Monolog\Processor\TracyExceptionProcessor', [$builder->expand('%logDir%')])
-			->addTag(self::TAG_PROCESSOR, 100);
+			->addTag(self::TAG_PROCESSOR)
+			->addTag(self::TAG_PRIORITY, 100);
 
 		if ($config['tracyBaseUrl'] !== NULL) {
 			$builder->addDefinition($this->prefix('processor.tracyBaseUrl'))
 				->setClass('Kdyby\Monolog\Processor\TracyUrlProcessor', [$config['tracyBaseUrl']])
-				->addTag(self::TAG_PROCESSOR, 10);
+				->addTag(self::TAG_PROCESSOR)
+				->addTag(self::TAG_PRIORITY, 10);
 		}
 
 		foreach ($config['processors'] as $processorName => $implementation) {
@@ -138,7 +143,8 @@ class MonologExtension extends CompilerExtension
 			));
 
 			$builder->getDefinition($serviceName)
-				->addTag(self::TAG_PROCESSOR, is_numeric($processorName) ? $processorName : 0);
+				->addTag(self::TAG_PROCESSOR)
+				->addTag(self::TAG_PRIORITY, is_numeric($processorName) ? $processorName : 0);
 		}
 	}
 
@@ -170,10 +176,12 @@ class MonologExtension extends CompilerExtension
 
 	protected function findByTagSorted($tag)
 	{
-		$services = $this->getContainerBuilder()->findByTag($tag);
-		uasort($services, function ($a, $b) {
-			$pa = is_numeric($a) ? $a : 0;
-			$pb = is_numeric($b) ? $b : 0;
+		$builder = $this->getContainerBuilder();
+
+		$services = $builder->findByTag($tag);
+		uksort($services, function ($nameA, $nameB) use ($builder) {
+			$pa = $builder->getDefinition($nameA)->getTag(self::TAG_PRIORITY) ?: 0;
+			$pb = $builder->getDefinition($nameB)->getTag(self::TAG_PRIORITY) ?: 0;
 			return $pa > $pb ? 1 : ($pa < $pb ? -1 : 0);
 		});
 
