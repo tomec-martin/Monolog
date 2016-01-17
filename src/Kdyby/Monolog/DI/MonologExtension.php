@@ -54,11 +54,6 @@ class MonologExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('logger'))
 			->setClass('Kdyby\Monolog\Logger', array($config['name']));
 
-		// change channel name to priority if available
-		$builder->addDefinition($this->prefix('processor.priorityProcessor'))
-			->setClass('Kdyby\Monolog\Processor\PriorityProcessor')
-			->addTag(self::TAG_PROCESSOR);
-
 		if (!isset($builder->parameters['logDir'])) {
 			if (Debugger::$logDirectory) {
 				$builder->parameters['logDir'] = Debugger::$logDirectory;
@@ -72,23 +67,8 @@ class MonologExtension extends CompilerExtension
 			@mkdir($builder->parameters['logDir']);
 		}
 
-		// handlers
-		foreach ($config['handlers'] as $handlerName => $implementation) {
-			$this->compiler->parseServices($builder, array(
-				'services' => array($serviceName = $this->prefix('handler.' . $handlerName) => $implementation),
-			));
-
-			$builder->getDefinition($serviceName)->addTag(self::TAG_HANDLER);
-		}
-
-		// processors
-		foreach ($config['processors'] as $processorName => $implementation) {
-			$this->compiler->parseServices($builder, array(
-				'services' => array($serviceName = $this->prefix('processor.' . $processorName) => $implementation),
-			));
-
-			$builder->getDefinition($serviceName)->addTag(self::TAG_PROCESSOR);
-		}
+		$this->loadHandlers($config);
+		$this->loadProcessors($config);
 
 		// Tracy adapter
 		$builder->addDefinition($this->prefix('adapter'))
@@ -105,6 +85,47 @@ class MonologExtension extends CompilerExtension
 				$builder->addDefinition($existing)
 					->setFactory($this->prefix('@adapter'));
 			}
+		}
+	}
+
+
+
+	/**
+	 * @param $config
+	 */
+	protected function loadHandlers(array $config)
+	{
+		$builder = $this->getContainerBuilder();
+
+		foreach ($config['handlers'] as $handlerName => $implementation) {
+			$this->compiler->parseServices($builder, array(
+				'services' => array($serviceName = $this->prefix('handler.' . $handlerName) => $implementation),
+			));
+
+			$builder->getDefinition($serviceName)->addTag(self::TAG_HANDLER);
+		}
+	}
+
+
+
+	/**
+	 * @param $config
+	 */
+	protected function loadProcessors(array $config)
+	{
+		$builder = $this->getContainerBuilder();
+
+		// change channel name to priority if available
+		$builder->addDefinition($this->prefix('processor.priorityProcessor'))
+			->setClass('Kdyby\Monolog\Processor\PriorityProcessor')
+			->addTag(self::TAG_PROCESSOR);
+
+		foreach ($config['processors'] as $processorName => $implementation) {
+			$this->compiler->parseServices($builder, array(
+				'services' => array($serviceName = $this->prefix('processor.' . $processorName) => $implementation),
+			));
+
+			$builder->getDefinition($serviceName)->addTag(self::TAG_PROCESSOR);
 		}
 	}
 
