@@ -125,10 +125,10 @@ class ExtensionTest extends Tester\TestCase
 		$logger = $dic->getByType('Monolog\Logger');
 		$processors = $logger->getProcessors();
 		Assert::count(4, $processors);
+		Assert::type('Kdyby\Monolog\Processor\PriorityProcessor', array_shift($processors));
 		Assert::type('Monolog\Processor\WebProcessor', array_shift($processors));
 		Assert::type('Monolog\Processor\ProcessIdProcessor', array_shift($processors));
 		Assert::type('Monolog\Processor\GitProcessor', array_shift($processors));
-		Assert::type('Kdyby\Monolog\Processor\PriorityProcessor', array_shift($processors));
 	}
 
 }

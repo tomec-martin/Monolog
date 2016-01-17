@@ -119,7 +119,7 @@ class MonologExtension extends CompilerExtension
 		// change channel name to priority if available
 		$builder->addDefinition($this->prefix('processor.priorityProcessor'))
 			->setClass('Kdyby\Monolog\Processor\PriorityProcessor')
-			->addTag(self::TAG_PROCESSOR);
+			->addTag(self::TAG_PROCESSOR, 20);
 
 		foreach ($config['processors'] as $processorName => $implementation) {
 			$this->compiler->parseServices($builder, array(
