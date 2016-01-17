@@ -102,7 +102,8 @@ class MonologExtension extends CompilerExtension
 				'services' => array($serviceName = $this->prefix('handler.' . $handlerName) => $implementation),
 			));
 
-			$builder->getDefinition($serviceName)->addTag(self::TAG_HANDLER);
+			$builder->getDefinition($serviceName)
+				->addTag(self::TAG_HANDLER, is_numeric($handlerName) ? $handlerName : 0);
 		}
 	}
 
@@ -125,7 +126,8 @@ class MonologExtension extends CompilerExtension
 				'services' => array($serviceName = $this->prefix('processor.' . $processorName) => $implementation),
 			));
 
-			$builder->getDefinition($serviceName)->addTag(self::TAG_PROCESSOR);
+			$builder->getDefinition($serviceName)
+				->addTag(self::TAG_PROCESSOR, is_numeric($processorName) ? $processorName : 0);
 		}
 	}
 
@@ -136,11 +138,11 @@ class MonologExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$logger = $builder->getDefinition($this->prefix('logger'));
 
-		foreach ($handlers = $builder->findByTag(self::TAG_HANDLER) as $serviceName => $meta) {
+		foreach ($handlers = $this->findByTagSorted(self::TAG_HANDLER) as $serviceName => $meta) {
 			$logger->addSetup('pushHandler', array('@' . $serviceName));
 		}
 
-		foreach ($builder->findByTag(self::TAG_PROCESSOR) as $serviceName => $meta) {
+		foreach ($this->findByTagSorted(self::TAG_PROCESSOR) as $serviceName => $meta) {
 			$logger->addSetup('pushProcessor', array('@' . $serviceName));
 		}
 
@@ -151,6 +153,20 @@ class MonologExtension extends CompilerExtension
 				new Statement('Kdyby\Monolog\Handler\FallbackNetteHandler', array($config['name'], $builder->expand('%logDir%')))
 			));
 		}
+	}
+
+
+
+	protected function findByTagSorted($tag)
+	{
+		$services = $this->getContainerBuilder()->findByTag($tag);
+		uasort($services, function ($a, $b) {
+			$pa = is_numeric($a) ? $a : 0;
+			$pb = is_numeric($b) ? $b : 0;
+			return $pa > $pb ? 1 : ($pa < $pb ? -1 : 0);
+		});
+
+		return $services;
 	}
 
 

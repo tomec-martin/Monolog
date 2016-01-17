@@ -33,12 +33,16 @@ class ExtensionTest extends Tester\TestCase
 	/**
 	 * @return \SystemContainer|\Nette\DI\Container
 	 */
-	protected function createContainer()
+	protected function createContainer($configName = NULL)
 	{
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		Kdyby\Monolog\DI\MonologExtension::register($config);
 		$config->addConfig(__DIR__ . '/../nette-reset.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
+
+		if ($configName !== NULL) {
+			$config->addConfig(__DIR__ . '/config/' . $configName . '.neon');
+		}
 
 		return $config->createContainer();
 	}
@@ -98,6 +102,33 @@ class ExtensionTest extends Tester\TestCase
 		);
 
 		Assert::count(2, glob(TEMP_DIR . '/exception-*.html'));
+	}
+
+
+
+	public function testHandlersSorting()
+	{
+		$dic = $this->createContainer('handlers');
+		$logger = $dic->getByType('Monolog\Logger');
+		$handlers = $logger->getHandlers();
+		Assert::count(3, $handlers);
+		Assert::type('Monolog\Handler\NewRelicHandler', array_shift($handlers));
+		Assert::type('Monolog\Handler\ChromePHPHandler', array_shift($handlers));
+		Assert::type('Monolog\Handler\BrowserConsoleHandler', array_shift($handlers));
+	}
+
+
+
+	public function testProcessorsSorting()
+	{
+		$dic = $this->createContainer('processors');
+		$logger = $dic->getByType('Monolog\Logger');
+		$processors = $logger->getProcessors();
+		Assert::count(4, $processors);
+		Assert::type('Monolog\Processor\WebProcessor', array_shift($processors));
+		Assert::type('Monolog\Processor\ProcessIdProcessor', array_shift($processors));
+		Assert::type('Monolog\Processor\GitProcessor', array_shift($processors));
+		Assert::type('Kdyby\Monolog\Processor\PriorityProcessor', array_shift($processors));
 	}
 
 }

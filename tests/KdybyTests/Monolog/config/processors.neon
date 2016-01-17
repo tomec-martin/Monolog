@@ -1,0 +1,5 @@
+monolog:
+	processors:
+		- Monolog\Processor\GitProcessor()
+		- Monolog\Processor\ProcessIdProcessor()
+		- Monolog\Processor\WebProcessor()
