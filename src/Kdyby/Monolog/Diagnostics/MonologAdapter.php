@@ -63,7 +63,7 @@ class MonologAdapter extends Logger
 	public function log($message, $priority = self::INFO)
 	{
 		if (!is_array($message) && method_exists($this, 'logException')) { // forward BC with Nette in 2.3-dev
-			$exceptionFile = $message instanceof \Exception ? $this->logException($message) : NULL;
+			$exceptionFile = $message instanceof \Exception || $message instanceof \Throwable ? $this->logException($message) : NULL;
 
 			$message = array(
 				@date('[Y-m-d H-i-s]'),
