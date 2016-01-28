@@ -50,9 +50,9 @@ class FallbackNetteHandler extends ErrorLogHandler
 
 
 
-	public function __construct($appName, $logDir, $expandNewlines = FALSE)
+	public function __construct($appName, $logDir, $expandNewlines = FALSE, $level = Monolog\Logger::DEBUG)
 	{
-		parent::__construct(self::SAPI, Monolog\Logger::DEBUG, TRUE, $expandNewlines);
+		parent::__construct(self::SAPI, $level, TRUE, $expandNewlines);
 		$this->appName = $appName;
 		$this->logDir = $logDir;
 
