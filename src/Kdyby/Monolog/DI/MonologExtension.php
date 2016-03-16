@@ -39,6 +39,7 @@ class MonologExtension extends CompilerExtension
 		'name' => 'app',
 		'hookToTracy' => TRUE,
 		'tracyBaseUrl' => NULL,
+		'usePriorityProcessor' => TRUE,
 		// 'registerFallback' => TRUE,
 	);
 
@@ -119,11 +120,13 @@ class MonologExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		// change channel name to priority if available
-		$builder->addDefinition($this->prefix('processor.priorityProcessor'))
-			->setClass('Kdyby\Monolog\Processor\PriorityProcessor')
-			->addTag(self::TAG_PROCESSOR)
-			->addTag(self::TAG_PRIORITY, 20);
+		if ($config['usePriorityProcessor'] === TRUE) {
+			// change channel name to priority if available
+			$builder->addDefinition($this->prefix('processor.priorityProcessor'))
+				->setClass('Kdyby\Monolog\Processor\PriorityProcessor')
+				->addTag(self::TAG_PROCESSOR)
+				->addTag(self::TAG_PRIORITY, 20);
+		}
 
 		$builder->addDefinition($this->prefix('processor.tracyException'))
 			->setClass('Kdyby\Monolog\Processor\TracyExceptionProcessor', [$builder->expand('%logDir%')])
