@@ -198,7 +198,7 @@ class MonologExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
 
-		$initialize = $class->methods['initialize'];
+		$initialize = $class->getMethod('initialize');
 
 		if ($config['hookToTracy'] === TRUE) {
 			if (method_exists('Tracy\Debugger', 'setLogger')) {
