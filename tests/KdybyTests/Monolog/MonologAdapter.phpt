@@ -46,7 +46,7 @@ class MonologAdapterTest extends Tester\TestCase
 
 	protected function setUp()
 	{
-		$this->monolog = new Logger('kdyby', array($this->testHandler = new TestHandler()));
+		$this->monolog = new Logger('kdyby', [$this->testHandler = new TestHandler()]);
 		$this->adapter = new Kdyby\Monolog\Diagnostics\MonologAdapter($this->monolog);
 	}
 
@@ -60,16 +60,16 @@ class MonologAdapterTest extends Tester\TestCase
 		$now = new \DateTime();
 		$datetime = $now->format('[Y-m-d H-i-s]');
 
-		return array(
-			array($now, array($datetime, 'test message 1', ' @ https://www.kdyby.org/', NULL), 'debug'),
-			array($now, array($datetime, 'test message 2', ' @ https://www.kdyby.org/', NULL), 'info'),
-			array($now, array($datetime, 'test message 3', ' @ https://www.kdyby.org/', NULL), 'notice'),
-			array($now, array($datetime, 'test message 4', ' @ https://www.kdyby.org/', NULL), 'warning'),
-			array($now, array($datetime, 'test message 5', ' @ https://www.kdyby.org/', NULL), 'error'),
-			array($now, array($datetime, 'test message 6', ' @ https://www.kdyby.org/', NULL), 'critical'),
-			array($now, array($datetime, 'test message 7', ' @ https://www.kdyby.org/', NULL), 'alert'),
-			array($now, array($datetime, 'test message 8', ' @ https://www.kdyby.org/', NULL), 'emergency'),
-		);
+		return [
+			[$now, [$datetime, 'test message 1', ' @ https://www.kdyby.org/', NULL], 'debug'],
+			[$now, [$datetime, 'test message 2', ' @ https://www.kdyby.org/', NULL], 'info'],
+			[$now, [$datetime, 'test message 3', ' @ https://www.kdyby.org/', NULL], 'notice'],
+			[$now, [$datetime, 'test message 4', ' @ https://www.kdyby.org/', NULL], 'warning'],
+			[$now, [$datetime, 'test message 5', ' @ https://www.kdyby.org/', NULL], 'error'],
+			[$now, [$datetime, 'test message 6', ' @ https://www.kdyby.org/', NULL], 'critical'],
+			[$now, [$datetime, 'test message 7', ' @ https://www.kdyby.org/', NULL], 'alert'],
+			[$now, [$datetime, 'test message 8', ' @ https://www.kdyby.org/', NULL], 'emergency'],
+		];
 	}
 
 
@@ -99,7 +99,7 @@ class MonologAdapterTest extends Tester\TestCase
 		$now = new \DateTime();
 		$datetime = $now->format('[Y-m-d H-i-s]');
 
-		$this->adapter->log(array($datetime, 'test message', ' @ CLI: php www/index.php orm:validate', NULL), 'info');
+		$this->adapter->log([$datetime, 'test message', ' @ CLI: php www/index.php orm:validate', NULL], 'info');
 		Assert::count(1, $this->testHandler->getRecords());
 
 		list($record) = $this->testHandler->getRecords();
@@ -118,7 +118,7 @@ class MonologAdapterTest extends Tester\TestCase
 		$now = new \DateTime();
 		$datetime = $now->format('[Y-m-d H-i-s]');
 
-		$this->adapter->log(array($datetime, 'test message', ' @ https://www.kdyby.org/', ' @@ exception-2014-08-14-11-11-26-88167e58be9dc0dfd12a61b3d8d33838.html'), 'exception');
+		$this->adapter->log([$datetime, 'test message', ' @ https://www.kdyby.org/', ' @@ exception-2014-08-14-11-11-26-88167e58be9dc0dfd12a61b3d8d33838.html'], 'exception');
 		Assert::count(1, $this->testHandler->getRecords());
 
 		list($record) = $this->testHandler->getRecords();
@@ -137,7 +137,7 @@ class MonologAdapterTest extends Tester\TestCase
 		$now = new \DateTime();
 		$datetime = $now->format('[Y-m-d H-i-s]');
 
-		$this->adapter->log(array($datetime, 'test message', ' @ https://www.kdyby.org/', NULL), 'nemam');
+		$this->adapter->log([$datetime, 'test message', ' @ https://www.kdyby.org/', NULL], 'nemam');
 		Assert::count(1, $this->testHandler->getRecords());
 
 		list($record) = $this->testHandler->getRecords();

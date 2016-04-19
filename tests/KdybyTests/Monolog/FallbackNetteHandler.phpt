@@ -63,16 +63,16 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 
 	public function dataWrite_standardLevels()
 	{
-		return array(
-			array(Monolog\Logger::DEBUG, 'debug'),
-			array(Monolog\Logger::INFO, 'info'),
-			array(Monolog\Logger::NOTICE, 'notice'),
-			array(Monolog\Logger::WARNING, 'warning'),
-			array(Monolog\Logger::ERROR, 'error'),
-			array(Monolog\Logger::CRITICAL, 'critical'),
-			array(Monolog\Logger::ALERT, 'alert'),
-			array(Monolog\Logger::EMERGENCY, 'emergency'),
-		);
+		return [
+			[Monolog\Logger::DEBUG, 'debug'],
+			[Monolog\Logger::INFO, 'info'],
+			[Monolog\Logger::NOTICE, 'notice'],
+			[Monolog\Logger::WARNING, 'warning'],
+			[Monolog\Logger::ERROR, 'error'],
+			[Monolog\Logger::CRITICAL, 'critical'],
+			[Monolog\Logger::ALERT, 'alert'],
+			[Monolog\Logger::EMERGENCY, 'emergency'],
+		];
 	}
 
 
@@ -82,15 +82,15 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 	 */
 	public function testWrite_standardLevels($level, $levelName)
 	{
-		$this->handler->handle(array(
+		$this->handler->handle([
 			'message' => "test message",
-			'context' => array(),
+			'context' => [],
 			'level' => $level,
 			'level_name' => strtoupper($levelName),
 			'channel' => 'kdyby',
 			'datetime' => $this->now,
-			'extra' => array(),
-		));
+			'extra' => [],
+		]);
 
 		Assert::match(
 			'[%a%] test message [] []',
@@ -102,25 +102,25 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 
 	public function testWrite_customChannel()
 	{
-		$this->handler->handle(array(
+		$this->handler->handle([
 			'message' => "test message",
-			'context' => array(),
+			'context' => [],
 			'level' => Monolog\Logger::INFO,
 			'level_name' => 'INFO',
 			'channel' => 'nemam',
 			'datetime' => $this->now,
-			'extra' => array(),
-		));
+			'extra' => [],
+		]);
 
-		$this->handler->handle(array(
+		$this->handler->handle([
 			'message' => "test message",
-			'context' => array(),
+			'context' => [],
 			'level' => Monolog\Logger::WARNING,
 			'level_name' => 'WARNING',
 			'channel' => 'nemam',
 			'datetime' => $this->now,
-			'extra' => array(),
-		));
+			'extra' => [],
+		]);
 
 		Assert::match(
 			'[%a%] INFO: test message [] []' . "\n" .
@@ -133,15 +133,15 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 
 	public function testWrite_contextAsJson()
 	{
-		$this->handler->handle(array(
+		$this->handler->handle([
 			'message' => "test message",
-			'context' => array('at' => 'http://www.kdyby.org', 'tracy' => 'exception-2014-08-14-11-11-26-88167e58be9dc0dfd12a61b3d8d33838.html'),
+			'context' => ['at' => 'http://www.kdyby.org', 'tracy' => 'exception-2014-08-14-11-11-26-88167e58be9dc0dfd12a61b3d8d33838.html'],
 			'level' => Monolog\Logger::INFO,
 			'level_name' => 'INFO',
 			'channel' => 'custom',
 			'datetime' => $this->now,
-			'extra' => array(),
-		));
+			'extra' => [],
+		]);
 
 		Assert::match(
 			'[%a%] INFO: test message {"at":"http://www.kdyby.org","tracy":"exception-2014-08-14-11-11-26-88167e58be9dc0dfd12a61b3d8d33838.html"} []',
@@ -153,15 +153,15 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 
 	public function testWrite_extraAsJson()
 	{
-		$this->handler->handle(array(
+		$this->handler->handle([
 			'message' => "test message",
-			'context' => array(),
+			'context' => [],
 			'level' => Monolog\Logger::INFO,
 			'level_name' => 'INFO',
 			'channel' => 'custom',
 			'datetime' => $this->now,
-			'extra' => array('secret' => 'no animals were harmed during writing this test case'),
-		));
+			'extra' => ['secret' => 'no animals were harmed during writing this test case'],
+		]);
 
 		Assert::match(
 			'[%a%] INFO: test message [] {"secret":"no animals were harmed during writing this test case"}',

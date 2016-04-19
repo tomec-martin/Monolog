@@ -76,10 +76,10 @@ class ExtensionTest extends Tester\TestCase
 		Debugger::log(new \Exception('tracy exception message 2'));
 
 		$logger->addInfo('logger message 1');
-		$logger->addInfo('logger message 2', array('channel' => 'custom'));
+		$logger->addInfo('logger message 2', ['channel' => 'custom']);
 
 		$logger->addError('logger message 3');
-		$logger->addError('logger message 4', array('channel' => 'custom'));
+		$logger->addError('logger message 4', ['channel' => 'custom']);
 
 		$logger->addWarning('exception message 1', ['exception' => new \Exception('exception message 1')]);
 

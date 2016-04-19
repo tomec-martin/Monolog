@@ -32,7 +32,7 @@ class CustomChannel extends Monolog\Logger
 
 	public function __construct($name, Logger $parentLogger)
 	{
-		parent::__construct($name, array(), array());
+		parent::__construct($name, [], []);
 		$this->parentLogger = $parentLogger;
 	}
 
@@ -106,9 +106,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addRecord($level, $message, array $context = array())
+	public function addRecord($level, $message, array $context = [])
 	{
-		return $this->parentLogger->addRecord($level, $message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addRecord($level, $message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -117,9 +117,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addDebug($message, array $context = array())
+	public function addDebug($message, array $context = [])
 	{
-		return $this->parentLogger->addDebug($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addDebug($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -128,9 +128,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addInfo($message, array $context = array())
+	public function addInfo($message, array $context = [])
 	{
-		return $this->parentLogger->addInfo($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addInfo($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -139,9 +139,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addNotice($message, array $context = array())
+	public function addNotice($message, array $context = [])
 	{
-		return $this->parentLogger->addNotice($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addNotice($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -150,9 +150,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addWarning($message, array $context = array())
+	public function addWarning($message, array $context = [])
 	{
-		return $this->parentLogger->addWarning($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addWarning($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -161,9 +161,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addError($message, array $context = array())
+	public function addError($message, array $context = [])
 	{
-		return $this->parentLogger->addError($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addError($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -172,9 +172,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addCritical($message, array $context = array())
+	public function addCritical($message, array $context = [])
 	{
-		return $this->parentLogger->addCritical($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addCritical($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -183,9 +183,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addAlert($message, array $context = array())
+	public function addAlert($message, array $context = [])
 	{
-		return $this->parentLogger->addAlert($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addAlert($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -194,9 +194,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function addEmergency($message, array $context = array())
+	public function addEmergency($message, array $context = [])
 	{
-		return $this->parentLogger->addEmergency($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->addEmergency($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -216,9 +216,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function log($level, $message, array $context = array())
+	public function log($level, $message, array $context = [])
 	{
-		return $this->parentLogger->log($level, $message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->log($level, $message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -227,9 +227,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function debug($message, array $context = array())
+	public function debug($message, array $context = [])
 	{
-		return $this->parentLogger->debug($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->debug($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -238,9 +238,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function info($message, array $context = array())
+	public function info($message, array $context = [])
 	{
-		return $this->parentLogger->info($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->info($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -249,9 +249,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function notice($message, array $context = array())
+	public function notice($message, array $context = [])
 	{
-		return $this->parentLogger->notice($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->notice($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -260,9 +260,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function warn($message, array $context = array())
+	public function warn($message, array $context = [])
 	{
-		return $this->parentLogger->warn($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->warn($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -271,9 +271,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function warning($message, array $context = array())
+	public function warning($message, array $context = [])
 	{
-		return $this->parentLogger->warning($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->warning($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -282,9 +282,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function err($message, array $context = array())
+	public function err($message, array $context = [])
 	{
-		return $this->parentLogger->err($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->err($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -293,9 +293,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function error($message, array $context = array())
+	public function error($message, array $context = [])
 	{
-		return $this->parentLogger->error($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->error($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -304,9 +304,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function crit($message, array $context = array())
+	public function crit($message, array $context = [])
 	{
-		return $this->parentLogger->crit($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->crit($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -315,9 +315,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function critical($message, array $context = array())
+	public function critical($message, array $context = [])
 	{
-		return $this->parentLogger->critical($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->critical($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -326,9 +326,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function alert($message, array $context = array())
+	public function alert($message, array $context = [])
 	{
-		return $this->parentLogger->alert($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->alert($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -337,9 +337,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function emerg($message, array $context = array())
+	public function emerg($message, array $context = [])
 	{
-		return $this->parentLogger->emerg($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->emerg($message, ['channel' => $this->name] + $context);
 	}
 
 
@@ -348,9 +348,9 @@ class CustomChannel extends Monolog\Logger
 	 * {@inheritdoc}
 	 * @return Boolean Whether the record has been processed
 	 */
-	public function emergency($message, array $context = array())
+	public function emergency($message, array $context = [])
 	{
-		return $this->parentLogger->emergency($message, array('channel' => $this->name) + $context);
+		return $this->parentLogger->emergency($message, ['channel' => $this->name] + $context);
 	}
 
 }

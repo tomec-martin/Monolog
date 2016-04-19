@@ -86,7 +86,7 @@ class FallbackNetteHandler extends ErrorLogHandler
 		if ($this->expandNewlines) {
 			$entry = '';
 			foreach (preg_split('{[\r\n]+}', (string) $record['message']) as $line) {
-				$entry .= trim($this->getFormatter()->format(array('message' => $line) + $record)) . PHP_EOL;
+				$entry .= trim($this->getFormatter()->format(['message' => $line] + $record)) . PHP_EOL;
 			}
 
 		} else {

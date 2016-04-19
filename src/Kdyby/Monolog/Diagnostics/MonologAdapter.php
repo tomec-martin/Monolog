@@ -29,14 +29,14 @@ class MonologAdapter extends Logger
 	/**
 	 * @var array
 	 */
-	private $priorityMap = array(
+	private $priorityMap = [
 		self::DEBUG => Monolog\Logger::DEBUG,
 		self::INFO => Monolog\Logger::INFO,
 		self::WARNING => Monolog\Logger::WARNING,
 		self::ERROR => Monolog\Logger::ERROR,
 		self::EXCEPTION => Monolog\Logger::CRITICAL,
 		self::CRITICAL => Monolog\Logger::CRITICAL
-	);
+	];
 
 	/**
 	 * @var Monolog\Logger
@@ -65,22 +65,22 @@ class MonologAdapter extends Logger
 		if (!is_array($message) && method_exists($this, 'logException')) { // forward BC with Nette in 2.3-dev
 			$exceptionFile = ($message instanceof \Exception || $message instanceof \Throwable) ? $this->logException($message) : NULL;
 
-			$message = array(
+			$message = [
 				@date('[Y-m-d H-i-s]'),
 				$this->formatMessage($message),
 				' @ ' . self::getSource(),
 				$exceptionFile ? ' @@ ' . basename($exceptionFile) : NULL
-			);
+			];
 
-			if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL), TRUE)) {
+			if (in_array($priority, [self::ERROR, self::EXCEPTION, self::CRITICAL], TRUE)) {
 				$this->sendEmail(implode('', $message));
 			}
 		}
 
 		$normalised = $message;
-		$context = array(
+		$context = [
 			'at' => self::getSource(),
-		);
+		];
 
 		if (is_array($message)) { // bc with Nette until 2.3
 			if (count($message) >= 2 && preg_match('~\\[[\\d+ -]+\\]~i', $message[0])) {
@@ -102,14 +102,14 @@ class MonologAdapter extends Logger
 
 		switch ($priority) {
 			case 'access':
-				$this->monolog->addInfo($normalised, array('priority' => $priority) + $context);
+				$this->monolog->addInfo($normalised, ['priority' => $priority] + $context);
 				break;
 
 			default:
 				$this->monolog->addRecord(
 					$this->getLevel($priority),
 					$normalised,
-					array('priority' => $priority) + $context
+					['priority' => $priority] + $context
 				);
 		}
 		return isset($context['tracy']) ? $context['tracy'] : '';
