@@ -54,7 +54,6 @@ class TracyExceptionProcessor
 		) {
 			// exception passed to context
 			$record['context']['tracy'] = $this->logBluescreen($record['context']['exception']);
-			unset($record['context']['exception']);
 		}
 
 		return $record;
