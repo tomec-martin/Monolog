@@ -62,6 +62,8 @@ class MonologAdapter extends Logger
 
 	public function log($message, $priority = self::INFO)
 	{
+		$exception = ($message instanceof \Exception || $message instanceof \Throwable) ? $message : NULL;
+
 		if (!is_array($message) && method_exists($this, 'logException')) { // forward BC with Nette in 2.3-dev
 			$exceptionFile = ($message instanceof \Exception || $message instanceof \Throwable) ? $this->logException($message) : NULL;
 
@@ -81,6 +83,10 @@ class MonologAdapter extends Logger
 		$context = [
 			'at' => self::getSource(),
 		];
+
+		if ($exception !== NULL) {
+			$context['exception'] = $exception;
+		}
 
 		if (is_array($message)) { // bc with Nette until 2.3
 			if (count($message) >= 2 && preg_match('~\\[[\\d+ -]+\\]~i', $message[0])) {
