@@ -176,6 +176,10 @@ class MonologExtension extends CompilerExtension
 				])
 			]);
 		}
+
+		foreach ($builder->findByType('Psr\Log\LoggerAwareInterface') as $service) {
+			$service->addSetup('setLogger', ['@' . $this->prefix('logger')]);
+		}
 	}
 
 
