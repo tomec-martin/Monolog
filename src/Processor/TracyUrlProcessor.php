@@ -10,6 +10,8 @@
 
 namespace Kdyby\Monolog\Processor;
 
+use Kdyby\Monolog\Tracy\MonologAdapter;
+
 
 
 class TracyUrlProcessor
@@ -20,22 +22,37 @@ class TracyUrlProcessor
 	 */
 	private $baseUrl;
 
+	/**
+	 * @var \Kdyby\Monolog\Tracy\MonologAdapter
+	 */
+	private $logger;
 
 
-	public function __construct($baseUrl)
+
+	public function __construct($baseUrl, MonologAdapter $logger)
 	{
 		$this->baseUrl = rtrim($baseUrl, '/');
+		$this->logger = $logger;
 	}
 
 
 
 	public function __invoke(array $record)
 	{
-		if (isset($record['context']['tracy'])) {
-			$record['context']['tracyUrl'] = sprintf('%s/%s', $this->baseUrl, $record['context']['tracy']);
+		if ($this->isHandling($record)) {
+			$exceptionFile = $this->logger->getExceptionFile($record['context']['exception']);
+			$record['context']['tracyUrl'] = sprintf('%s/%s', $this->baseUrl, basename($exceptionFile));
 		}
 
 		return $record;
+	}
+
+
+
+	public function isHandling(array $record)
+	{
+		return isset($record['context']['exception'])
+			&& $record['context']['exception'] instanceof \Throwable;
 	}
 
 }
