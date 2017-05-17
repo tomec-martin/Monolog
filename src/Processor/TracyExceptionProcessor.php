@@ -10,7 +10,7 @@
 
 namespace Kdyby\Monolog\Processor;
 
-use Kdyby\Monolog\Diagnostics\TracyLogger;
+use Kdyby\Monolog\Diagnostics\MonologAdapter;
 
 
 
@@ -25,13 +25,13 @@ class TracyExceptionProcessor
 	/**
 	 * @var \Tracy\Logger
 	 */
-	private $tracyLogger;
+	private $logger;
 
 
 
-	public function __construct($tracyDir)
+	public function __construct(MonologAdapter $logger)
 	{
-		$this->tracyLogger = new TracyLogger($tracyDir);
+		$this->logger = $logger;
 	}
 
 
@@ -61,10 +61,10 @@ class TracyExceptionProcessor
 	 */
 	protected function logBluescreen($exception)
 	{
-		$fileName = $this->tracyLogger->getExceptionFile($exception);
+		$fileName = $this->logger->getExceptionFile($exception);
 
 		if (!isset($this->processedExceptionFileNames[$fileName])) {
-			$this->tracyLogger->renderToFile($exception, $fileName);
+			$this->logger->renderToFile($exception, $fileName);
 			$this->processedExceptionFileNames[$fileName] = TRUE;
 		}
 

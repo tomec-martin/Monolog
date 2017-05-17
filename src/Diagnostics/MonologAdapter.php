@@ -55,6 +55,16 @@ class MonologAdapter extends Logger
 
 
 
+	/**
+	 * @return string
+	 */
+	public function renderToFile($exception, $file = NULL)
+	{
+		return parent::logException($exception, $file);
+	}
+
+
+
 	public function log($originalMessage, $priority = self::INFO)
 	{
 		$message = $this->formatMessage($originalMessage);

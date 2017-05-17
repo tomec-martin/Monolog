@@ -119,7 +119,9 @@ class MonologExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('processor.tracyException'))
-			->setClass('Kdyby\Monolog\Processor\TracyExceptionProcessor', [$builder->parameters['logDir']])
+			->setClass('Kdyby\Monolog\Processor\TracyExceptionProcessor', [
+				'logger' => $this->prefix('adapter'),
+			])
 			->addTag(self::TAG_PROCESSOR)
 			->addTag(self::TAG_PRIORITY, 100);
 
