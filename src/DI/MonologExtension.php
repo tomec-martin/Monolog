@@ -62,7 +62,7 @@ class MonologExtension extends CompilerExtension
 				$builder->parameters['logDir'] = Debugger::$logDirectory;
 
 			} else {
-				$builder->parameters['logDir'] = $builder->expand('%appDir%/../log');
+				$builder->parameters['logDir'] = $builder->parameters['appDir'] . '/../log';
 			}
 		}
 
@@ -78,16 +78,9 @@ class MonologExtension extends CompilerExtension
 			->setClass('Kdyby\Monolog\Diagnostics\MonologAdapter', [$this->prefix('@logger')])
 			->addTag('logger');
 
-		if ($builder->hasDefinition('tracy.logger')) { // since Nette 2.3
+		if ($builder->hasDefinition('tracy.logger')) {
 			$builder->removeDefinition($existing = 'tracy.logger');
-
-			if (method_exists($builder, 'addAlias')) { // since Nette 2.3
-				$builder->addAlias($existing, $this->prefix('adapter'));
-
-			} else { // old way of providing BC
-				$builder->addDefinition($existing)
-					->setFactory($this->prefix('@adapter'));
-			}
+			$builder->addAlias($existing, $this->prefix('adapter'));
 		}
 	}
 
@@ -101,8 +94,8 @@ class MonologExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		foreach ($config['handlers'] as $handlerName => $implementation) {
-			$this->compiler->parseServices($builder, [
-				'services' => [$serviceName = $this->prefix('handler.' . $handlerName) => $implementation],
+			Compiler::loadDefinitions($builder, [
+				$serviceName = $this->prefix('handler.' . $handlerName) => $implementation,
 			]);
 
 			$builder->getDefinition($serviceName)
@@ -129,7 +122,7 @@ class MonologExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('processor.tracyException'))
-			->setClass('Kdyby\Monolog\Processor\TracyExceptionProcessor', [$builder->expand('%logDir%')])
+			->setClass('Kdyby\Monolog\Processor\TracyExceptionProcessor', [$builder->parameters['logDir']])
 			->addTag(self::TAG_PROCESSOR)
 			->addTag(self::TAG_PRIORITY, 100);
 
@@ -141,8 +134,8 @@ class MonologExtension extends CompilerExtension
 		}
 
 		foreach ($config['processors'] as $processorName => $implementation) {
-			$this->compiler->parseServices($builder, [
-				'services' => [$serviceName = $this->prefix('processor.' . $processorName) => $implementation],
+			Compiler::loadDefinitions($builder, [
+				$serviceName = $this->prefix('processor.' . $processorName) => $implementation,
 			]);
 
 			$builder->getDefinition($serviceName)
@@ -170,7 +163,7 @@ class MonologExtension extends CompilerExtension
 
 		if ($config['registerFallback']) {
 			$logger->addSetup('pushHandler', [
-				new Statement('Kdyby\Monolog\Handler\FallbackNetteHandler', [$config['name'], $builder->expand('%logDir%')])
+				new Statement('Kdyby\Monolog\Handler\FallbackNetteHandler', [$config['name'], $builder->parameters['logDir']])
 			]);
 		}
 	}
@@ -201,21 +194,11 @@ class MonologExtension extends CompilerExtension
 		$initialize = $class->getMethod('initialize');
 
 		if ($config['hookToTracy'] === TRUE) {
-			if (method_exists('Tracy\Debugger', 'setLogger')) {
-				$code = '\Tracy\Debugger::setLogger($this->getService(?));';
-
-			} elseif (method_exists('Nette\Diagnostics\Debugger', 'setLogger')) {
-				$code = '\Nette\Diagnostics\Debugger::setLogger($this->getService(?));';
-
-			} else {
-				$code = '\Nette\Diagnostics\Debugger::$logger = $this->getService(?);';
-			}
-
-			$initialize->addBody($code, [$this->prefix('adapter')]);
+			$initialize->addBody('\Tracy\Debugger::setLogger($this->getService(?));', [$this->prefix('adapter')]);
 		}
 
 		if (empty(Debugger::$logDirectory)) {
-			$initialize->addBody('Tracy\Debugger::$logDirectory = ?;', [$builder->expand('%logDir%')]);
+			$initialize->addBody('Tracy\Debugger::$logDirectory = ?;', [$builder->parameters['logDir']]);
 		}
 	}
 

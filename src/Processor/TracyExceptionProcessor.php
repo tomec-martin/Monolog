@@ -11,8 +11,6 @@
 namespace Kdyby\Monolog\Processor;
 
 use Kdyby\Monolog\Diagnostics\TracyLogger;
-use Kdyby\Monolog\Diagnostics\TracyLoggerOld;
-use Tracy\Debugger;
 
 
 
@@ -33,11 +31,7 @@ class TracyExceptionProcessor
 
 	public function __construct($tracyDir)
 	{
-		if (version_compare(Debugger::VERSION, '2.3.3', '>=')) {
-			$this->tracyLogger = new TracyLogger($tracyDir);
-		} else {
-			$this->tracyLogger = new TracyLoggerOld($tracyDir);
-		}
+		$this->tracyLogger = new TracyLogger($tracyDir);
 	}
 
 
