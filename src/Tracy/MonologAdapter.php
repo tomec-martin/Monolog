@@ -47,9 +47,9 @@ class MonologAdapter extends Logger
 
 
 
-	public function __construct(Monolog\Logger $monolog, $email = NULL, BlueScreen $blueScreen = NULL)
+	public function __construct(Monolog\Logger $monolog, $logDirectory, $email = NULL, BlueScreen $blueScreen = NULL)
 	{
-		parent::__construct(Debugger::$logDirectory, $email, $blueScreen);
+		parent::__construct($logDirectory, $email, $blueScreen);
 		$this->monolog = $monolog;
 	}
 

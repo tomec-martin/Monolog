@@ -85,19 +85,19 @@ class ExtensionTest extends Tester\TestCase
 
 		Assert::match(
 			'[%a%] tracy message 1 {"at":"%a%"} []' . "\n" .
-			'[%a%] Exception: tracy exception message 2 in %a%:%d% {"at":"%a%","tracy":"exception-%a%.html"} []' . "\n" .
+			'[%a%] Exception: tracy exception message 2 in %a%:%d% {"at":"%a%","exception":"%a%"} []' . "\n" .
 			'[%a%] logger message 1 [] []',
 			file_get_contents(TEMP_DIR . '/info.log')
 		);
 
 		Assert::match(
-			'[%a%] exception message 1 {"exception":"%a%","tracy":"exception-%a%.html"} []',
+			'[%a%] exception message 1 {"exception":"%a%"} []',
 			file_get_contents(TEMP_DIR . '/warning.log')
 		);
 
 		Assert::match(
 			'[%a%] tracy message 2 {"at":"%a%"} []' . "\n" .
-			'[%a%] Exception: tracy exception message 1 in %a%:%d% {"at":"%a%","tracy":"exception-%a%.html"} []' . "\n" .
+			'[%a%] Exception: tracy exception message 1 in %a%:%d% {"at":"%a%","exception":"%a%"} []' . "\n" .
 			'[%a%] logger message 3 [] []',
 			file_get_contents(TEMP_DIR . '/error.log')
 		);
@@ -118,7 +118,8 @@ class ExtensionTest extends Tester\TestCase
 		$dic = $this->createContainer('handlers');
 		$logger = $dic->getByType('Monolog\Logger');
 		$handlers = $logger->getHandlers();
-		Assert::count(3, $handlers);
+		Assert::count(4, $handlers);
+		Assert::type('Kdyby\Monolog\Handler\TracyExceptionHandler', array_shift($handlers));
 		Assert::type('Monolog\Handler\NewRelicHandler', array_shift($handlers));
 		Assert::type('Monolog\Handler\ChromePHPHandler', array_shift($handlers));
 		Assert::type('Monolog\Handler\BrowserConsoleHandler', array_shift($handlers));
@@ -131,8 +132,7 @@ class ExtensionTest extends Tester\TestCase
 		$dic = $this->createContainer('processors');
 		$logger = $dic->getByType('Monolog\Logger');
 		$processors = $logger->getProcessors();
-		Assert::count(6, $processors);
-		Assert::type('Kdyby\Monolog\Processor\TracyExceptionProcessor', array_shift($processors));
+		Assert::count(5, $processors);
 		Assert::type('Kdyby\Monolog\Processor\PriorityProcessor', array_shift($processors));
 		Assert::type('Kdyby\Monolog\Processor\TracyUrlProcessor', array_shift($processors));
 		Assert::type('Monolog\Processor\WebProcessor', array_shift($processors));
