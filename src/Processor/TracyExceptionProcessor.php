@@ -56,7 +56,7 @@ class TracyExceptionProcessor
 		return !isset($record['context']['tracy'])
 			&& !isset($record['context']['tracy_filename'])
 			&& isset($record['context']['exception'])
-			&& $record['context']['exception'] instanceof \Throwable;
+			&& ($record['context']['exception'] instanceof \Throwable || $record['context']['exception'] instanceof \Exception);
 	}
 
 }

@@ -83,11 +83,11 @@ class MonologAdapter extends Logger
 			'at' => Helpers::getSource(),
 		];
 
-		if ($originalMessage instanceof \Throwable) {
+		if ($originalMessage instanceof \Throwable || $originalMessage instanceof \Exception) {
 			$context['exception'] = $originalMessage;
 		}
 
-		$exceptionFile = ($originalMessage instanceof \Throwable)
+		$exceptionFile = ($originalMessage instanceof \Throwable || $originalMessage instanceof \Exception)
 			? $this->getExceptionFile($originalMessage)
 			: NULL;
 

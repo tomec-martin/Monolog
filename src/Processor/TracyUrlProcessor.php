@@ -52,7 +52,7 @@ class TracyUrlProcessor
 	public function isHandling(array $record)
 	{
 		return isset($record['context']['exception'])
-			&& $record['context']['exception'] instanceof \Throwable;
+			&& ($record['context']['exception'] instanceof \Throwable || $record['context']['exception'] instanceof \Exception);
 	}
 
 }
