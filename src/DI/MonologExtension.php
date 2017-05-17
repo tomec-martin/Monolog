@@ -29,9 +29,6 @@ use Tracy\Debugger;
 class MonologExtension extends CompilerExtension
 {
 
-	/** @internal */
-	const TRACY_EXCEPTION_HANDLER_SERVICE_ID = 'handler.tracyException';
-
 	const TAG_HANDLER = 'monolog.handler';
 	const TAG_PROCESSOR = 'monolog.processor';
 	const TAG_PRIORITY = 'monolog.priority';
@@ -106,14 +103,6 @@ class MonologExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$exceptionHandlerServiceId = $this->prefix(self::TRACY_EXCEPTION_HANDLER_SERVICE_ID);
-		$builder->addDefinition($exceptionHandlerServiceId)
-			->setClass('Kdyby\Monolog\Handler\TracyExceptionHandler', [
-				'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
-			])
-			->addTag(self::TAG_HANDLER)
-			->addTag(self::TAG_PRIORITY, 100);
-
 		foreach ($config['handlers'] as $handlerName => $implementation) {
 			Compiler::loadDefinitions($builder, [
 				$serviceName = $this->prefix('handler.' . $handlerName) => $implementation,
@@ -138,6 +127,13 @@ class MonologExtension extends CompilerExtension
 				->addTag(self::TAG_PROCESSOR)
 				->addTag(self::TAG_PRIORITY, 20);
 		}
+
+		$builder->addDefinition($this->prefix('processor.tracyException'))
+			->setClass('Kdyby\Monolog\Processor\TracyExceptionProcessor', [
+				'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
+			])
+			->addTag(self::TAG_PROCESSOR)
+			->addTag(self::TAG_PRIORITY, 100);
 
 		if ($config['tracyBaseUrl'] !== NULL) {
 			$builder->addDefinition($this->prefix('processor.tracyBaseUrl'))
@@ -175,7 +171,6 @@ class MonologExtension extends CompilerExtension
 			$logger->addSetup('pushProcessor', ['@' . $serviceName]);
 		}
 
-		unset($handlers[$this->prefix(self::TRACY_EXCEPTION_HANDLER_SERVICE_ID)]); // tracy exception handler doesn't count
 		$config = $this->getConfig(['registerFallback' => empty($handlers)] + $this->getConfig($this->defaults));
 
 		if ($config['registerFallback']) {

@@ -8,15 +8,13 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
-namespace Kdyby\Monolog\Handler;
+namespace Kdyby\Monolog\Processor;
 
 use Kdyby\Monolog\Tracy\BlueScreenRenderer;
-use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Logger;
 
 
 
-class TracyExceptionHandler extends AbstractProcessingHandler
+class TracyExceptionProcessor
 {
 
 	/**
@@ -26,35 +24,37 @@ class TracyExceptionHandler extends AbstractProcessingHandler
 
 
 
-	public function __construct(BlueScreenRenderer $blueScreenRenderer, $level = Logger::DEBUG, $bubble = TRUE)
+	public function __construct(BlueScreenRenderer $blueScreenRenderer)
 	{
-		parent::__construct($level, $bubble);
 		$this->blueScreenRenderer = $blueScreenRenderer;
 	}
 
 
 
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function write(array $record)
+	public function __invoke(array $record)
 	{
+		if (!$this->isHandling($record)) {
+			return $record;
+		}
+
 		$exception = $record['context']['exception'];
 		$filename = $this->blueScreenRenderer->getExceptionFile($exception);
+		$record['context']['tracy_filename'] = basename($filename);
+
 		if (!file_exists($filename)) {
 			$this->blueScreenRenderer->renderToFile($exception, $filename);
+			$record['context']['tracy_created'] = true;
 		}
+
+		return $record;
 	}
 
 
 
-	/**
-	 * {@inheritdoc}
-	 */
 	public function isHandling(array $record)
 	{
-		return parent::isHandling($record)
-			&& !isset($record['context']['tracy'])
+		return !isset($record['context']['tracy'])
+			&& !isset($record['context']['tracy_filename'])
 			&& isset($record['context']['exception'])
 			&& $record['context']['exception'] instanceof \Throwable;
 	}
