@@ -56,9 +56,11 @@ class MonologAdapter extends Logger
 
 
 	/**
-	 * @return string
+	 * @param \Exception|\Throwable $exception
+	 * @param string $file
+	 * @return string logged error filename
 	 */
-	public function renderToFile($exception, $file = NULL)
+	public function renderToFile($exception, $file)
 	{
 		return parent::logException($exception, $file);
 	}

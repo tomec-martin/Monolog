@@ -131,7 +131,9 @@ class MonologExtension extends CompilerExtension
 
 		if ($config['tracyBaseUrl'] !== NULL) {
 			$builder->addDefinition($this->prefix('processor.tracyBaseUrl'))
-				->setClass('Kdyby\Monolog\Processor\TracyUrlProcessor', [$config['tracyBaseUrl']])
+				->setClass('Kdyby\Monolog\Processor\TracyUrlProcessor', [
+					'baseUrl' => $config['tracyBaseUrl'],
+				])
 				->addTag(self::TAG_PROCESSOR)
 				->addTag(self::TAG_PRIORITY, 10);
 		}
@@ -167,7 +169,10 @@ class MonologExtension extends CompilerExtension
 
 		if ($config['registerFallback']) {
 			$logger->addSetup('pushHandler', [
-				new Statement('Kdyby\Monolog\Handler\FallbackNetteHandler', [$config['name'], $builder->parameters['logDir']])
+				new Statement('Kdyby\Monolog\Handler\FallbackNetteHandler', [
+					'appName' => $config['name'],
+					'logDir' => $builder->parameters['logDir']
+				])
 			]);
 		}
 	}
@@ -202,7 +207,7 @@ class MonologExtension extends CompilerExtension
 		}
 
 		if (empty(Debugger::$logDirectory)) {
-			$initialize->addBody('Tracy\Debugger::$logDirectory = ?;', [$builder->parameters['logDir']]);
+			$initialize->addBody('\Tracy\Debugger::$logDirectory = ?;', [$builder->parameters['logDir']]);
 		}
 	}
 

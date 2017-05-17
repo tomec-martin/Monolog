@@ -33,7 +33,7 @@ class PriorityProcessor extends Nette\Object
 
 		} elseif (isset($record['context']['priority'])) {
 			$rename = strtoupper($record['context']['priority']);
-			if (!in_array($rename, array_keys(Logger::getLevels()), TRUE)) {
+			if (!array_key_exists($rename, Logger::getLevels())) {
 				$record['channel'] = strtolower($rename);
 			}
 			unset($record['context']['priority']);
