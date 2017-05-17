@@ -28,6 +28,7 @@
 		"nette/http": "^2.4@dev",
 		"nette/tester": "~1.7"
 	},
+	"minimum-stability": "dev",
 	"support": {
 		"email": "filip@prochazka.su",
 		"issues": "https://github.com/kdyby/monolog/issues"
