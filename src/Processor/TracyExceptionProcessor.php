@@ -64,7 +64,7 @@ class TracyExceptionProcessor
 		$fileName = $this->tracyLogger->getExceptionFile($exception);
 
 		if (!isset($this->processedExceptionFileNames[$fileName])) {
-			$this->tracyLogger->logException($exception, $fileName);
+			$this->tracyLogger->renderToFile($exception, $fileName);
 			$this->processedExceptionFileNames[$fileName] = TRUE;
 		}
 

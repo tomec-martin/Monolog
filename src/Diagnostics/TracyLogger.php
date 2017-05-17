@@ -20,7 +20,7 @@ class TracyLogger extends Logger
 	/**
 	 * @return string
 	 */
-	public function logException($exception, $file = NULL)
+	public function renderToFile($exception, $file = NULL)
 	{
 		return parent::logException($exception, $file);
 	}
