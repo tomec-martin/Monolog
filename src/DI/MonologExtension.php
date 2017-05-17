@@ -86,9 +86,6 @@ class MonologExtension extends CompilerExtension
 
 
 
-	/**
-	 * @param $config
-	 */
 	protected function loadHandlers(array $config)
 	{
 		$builder = $this->getContainerBuilder();
@@ -106,9 +103,6 @@ class MonologExtension extends CompilerExtension
 
 
 
-	/**
-	 * @param $config
-	 */
 	protected function loadProcessors(array $config)
 	{
 		$builder = $this->getContainerBuilder();
