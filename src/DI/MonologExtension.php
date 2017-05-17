@@ -48,27 +48,22 @@ class MonologExtension extends CompilerExtension
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
+
 		$config = $this->getConfig($this->defaults);
+		$config['logDir'] = self::resolveLogDir($builder->parameters);
+		self::createDirectory($config['logDir']);
+		$this->setConfig($config);
 
 		if (!isset($builder->parameters[$this->name]) || (is_array($builder->parameters[$this->name]) && !isset($builder->parameters[$this->name]['name']))) {
 			$builder->parameters[$this->name]['name'] = $config['name'];
 		}
 
+		if (!isset($builder->parameters['logDir'])) { // BC
+			$builder->parameters['logDir'] = $config['logDir'];
+		}
+
 		$builder->addDefinition($this->prefix('logger'))
 			->setClass('Kdyby\Monolog\Logger', [$config['name']]);
-
-		if (!isset($builder->parameters['logDir'])) {
-			if (Debugger::$logDirectory) {
-				$builder->parameters['logDir'] = Debugger::$logDirectory;
-
-			} else {
-				$builder->parameters['logDir'] = $builder->parameters['appDir'] . '/../log';
-			}
-		}
-
-		if (!@mkdir($builder->parameters['logDir'], 0777, true) && !is_dir($builder->parameters['logDir'])) {
-			throw new \RuntimeException(sprintf('Log dir %s cannot be created', $builder->parameters['logDir']));
-		}
 
 		$this->loadHandlers($config);
 		$this->loadProcessors($config);
@@ -85,7 +80,7 @@ class MonologExtension extends CompilerExtension
 		// The renderer has to be separate, to solve circural service dependencies
 		$builder->addDefinition($this->prefix('blueScreenRenderer'))
 			->setClass('Kdyby\Monolog\Tracy\BlueScreenRenderer', [
-				'directory' => $builder->parameters['logDir'],
+				'directory' => $config['logDir'],
 			])
 			->setAutowired(FALSE)
 			->addTag('logger');
@@ -177,7 +172,7 @@ class MonologExtension extends CompilerExtension
 			$logger->addSetup('pushHandler', [
 				new Statement('Kdyby\Monolog\Handler\FallbackNetteHandler', [
 					'appName' => $config['name'],
-					'logDir' => $builder->parameters['logDir']
+					'logDir' => $config['logDir']
 				])
 			]);
 		}
@@ -207,7 +202,7 @@ class MonologExtension extends CompilerExtension
 		$initialize = $class->getMethod('initialize');
 
 		if (empty(Debugger::$logDirectory)) {
-			$initialize->addBody('\Tracy\Debugger::$logDirectory = ?;', [$builder->parameters['logDir']]);
+			$initialize->addBody('\Tracy\Debugger::$logDirectory = ?;', [$this->config['logDir']]);
 		}
 	}
 
@@ -218,6 +213,36 @@ class MonologExtension extends CompilerExtension
 		$configurator->onCompile[] = function ($config, Compiler $compiler) {
 			$compiler->addExtension('monolog', new MonologExtension());
 		};
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	private static function resolveLogDir(array $parameters)
+	{
+		if (isset($parameters['logDir'])) {
+			return Nette\DI\Helpers::expand('%logDir%', $parameters);
+		}
+
+		if (Debugger::$logDirectory !== NULL) {
+			return Debugger::$logDirectory;
+		}
+
+		return Nette\DI\Helpers::expand('%appDir%/../log', $parameters);
+	}
+
+
+
+	/**
+	 * @param string $logDir
+	 */
+	private static function createDirectory($logDir)
+	{
+		if (!@mkdir($logDir, 0777, TRUE) && !is_dir($logDir)) {
+			throw new \RuntimeException(sprintf('Log dir %s cannot be created', $logDir));
+		}
 	}
 
 }
