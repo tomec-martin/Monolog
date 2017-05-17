@@ -34,7 +34,7 @@
 		"issues": "https://github.com/kdyby/monolog/issues"
 	},
 	"autoload": {
-		"psr-0": {
+		"psr-4": {
 			"Kdyby\\Monolog\\": "src/"
 		}
 	},
