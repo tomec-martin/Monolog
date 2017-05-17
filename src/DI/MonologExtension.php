@@ -65,9 +65,6 @@ class MonologExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('logger'))
 			->setClass('Kdyby\Monolog\Logger', [$config['name']]);
 
-		$this->loadHandlers($config);
-		$this->loadProcessors($config);
-
 		// Tracy adapter
 		$builder->addDefinition($this->prefix('adapter'))
 			->setClass('Kdyby\Monolog\Tracy\MonologAdapter', [
@@ -90,6 +87,9 @@ class MonologExtension extends CompilerExtension
 			$builder->removeDefinition($existing = 'tracy.logger');
 			$builder->addAlias($existing, $this->prefix('adapter'));
 		}
+
+		$this->loadHandlers($config);
+		$this->loadProcessors($config);
 	}
 
 
