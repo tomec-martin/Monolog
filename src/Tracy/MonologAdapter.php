@@ -28,6 +28,8 @@ use Tracy\Logger;
 class MonologAdapter extends Logger
 {
 
+	const ACCESS = 'access';
+
 	/**
 	 * @var array
 	 */
@@ -93,7 +95,7 @@ class MonologAdapter extends Logger
 		}
 
 		switch ($priority) {
-			case 'access':
+			case self::ACCESS:
 				$this->monolog->addInfo($message, $context);
 				break;
 
