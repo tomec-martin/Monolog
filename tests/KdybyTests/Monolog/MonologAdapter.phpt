@@ -11,6 +11,7 @@
 namespace KdybyTests\Monolog;
 
 use Kdyby;
+use Kdyby\Monolog\Tracy\MonologAdapter;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Nette;
@@ -28,7 +29,7 @@ class MonologAdapterTest extends Tester\TestCase
 {
 
 	/**
-	 * @var Kdyby\Monolog\Diagnostics\MonologAdapter
+	 * @var MonologAdapter
 	 */
 	protected $adapter;
 
@@ -47,7 +48,7 @@ class MonologAdapterTest extends Tester\TestCase
 	protected function setUp()
 	{
 		$this->monolog = new Logger('kdyby', [$this->testHandler = new TestHandler()]);
-		$this->adapter = new Kdyby\Monolog\Diagnostics\MonologAdapter($this->monolog);
+		$this->adapter = new MonologAdapter($this->monolog);
 	}
 
 

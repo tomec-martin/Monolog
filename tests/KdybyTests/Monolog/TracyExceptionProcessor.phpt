@@ -12,6 +12,7 @@ namespace KdybyTests\Monolog;
 
 use Kdyby;
 use Kdyby\Monolog\Processor\TracyExceptionProcessor;
+use Kdyby\Monolog\Tracy\MonologAdapter;
 use Monolog\Logger;
 use Nette;
 use Tester;
@@ -36,7 +37,7 @@ class TracyExceptionProcessorTest extends Tester\TestCase
 
 	protected function setUp()
 	{
-		$monologAdapter = new Kdyby\Monolog\Diagnostics\MonologAdapter(new Logger('test'));
+		$monologAdapter = new MonologAdapter(new Logger('test'));
 		$this->processor =  new TracyExceptionProcessor($monologAdapter);
 	}
 

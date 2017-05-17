@@ -10,7 +10,7 @@
 
 namespace Kdyby\Monolog\Processor;
 
-use Kdyby\Monolog\Diagnostics\MonologAdapter;
+use Kdyby\Monolog\Tracy\MonologAdapter;
 
 
 
