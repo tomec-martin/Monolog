@@ -85,7 +85,8 @@ class MonologExtension extends CompilerExtension
 			])
 			->addTag('logger');
 
-		if ($builder->hasDefinition('tracy.logger')) {
+		if ($config['hookToTracy'] === TRUE && $builder->hasDefinition('tracy.logger')) {
+			// TracyExtension initializes the logger from DIC, if definition is changed
 			$builder->removeDefinition($existing = 'tracy.logger');
 			$builder->addAlias($existing, $this->prefix('adapter'));
 		}
@@ -198,13 +199,7 @@ class MonologExtension extends CompilerExtension
 	public function afterCompile(Code\ClassType $class)
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
-
 		$initialize = $class->getMethod('initialize');
-
-		if ($config['hookToTracy'] === TRUE) {
-			$initialize->addBody('\Tracy\Debugger::setLogger($this->getService(?));', [$this->prefix('adapter')]);
-		}
 
 		if (empty(Debugger::$logDirectory)) {
 			$initialize->addBody('\Tracy\Debugger::$logDirectory = ?;', [$builder->parameters['logDir']]);
