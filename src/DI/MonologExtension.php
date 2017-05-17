@@ -75,7 +75,10 @@ class MonologExtension extends CompilerExtension
 
 		// Tracy adapter
 		$builder->addDefinition($this->prefix('adapter'))
-			->setClass('Kdyby\Monolog\Diagnostics\MonologAdapter', [$this->prefix('@logger')])
+			->setClass('Kdyby\Monolog\Diagnostics\MonologAdapter', [
+				'monolog' => $this->prefix('@logger'),
+				'email' => Debugger::$email,
+			])
 			->addTag('logger');
 
 		if ($builder->hasDefinition('tracy.logger')) {
