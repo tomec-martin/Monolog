@@ -10,7 +10,7 @@
 
 namespace Kdyby\Monolog\Handler;
 
-use Kdyby\Monolog\Tracy\MonologAdapter;
+use Kdyby\Monolog\Tracy\BlueScreenRenderer;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 
@@ -20,16 +20,16 @@ class TracyExceptionHandler extends AbstractProcessingHandler
 {
 
 	/**
-	 * @var \Kdyby\Monolog\Tracy\MonologAdapter
+	 * @var \Kdyby\Monolog\Tracy\BlueScreenRenderer
 	 */
-	private $logger;
+	private $blueScreenRenderer;
 
 
 
-	public function __construct(MonologAdapter $logger, $level = Logger::DEBUG, $bubble = TRUE)
+	public function __construct(BlueScreenRenderer $blueScreenRenderer, $level = Logger::DEBUG, $bubble = TRUE)
 	{
 		parent::__construct($level, $bubble);
-		$this->logger = $logger;
+		$this->blueScreenRenderer = $blueScreenRenderer;
 	}
 
 
@@ -40,9 +40,9 @@ class TracyExceptionHandler extends AbstractProcessingHandler
 	protected function write(array $record)
 	{
 		$exception = $record['context']['exception'];
-		$filename = $this->logger->getExceptionFile($exception);
+		$filename = $this->blueScreenRenderer->getExceptionFile($exception);
 		if (!file_exists($filename)) {
-			$this->logger->renderToFile($exception, $filename);
+			$this->blueScreenRenderer->renderToFile($exception, $filename);
 		}
 	}
 

@@ -17,6 +17,9 @@ use Monolog\Logger;
 use Nette;
 use Tester;
 use Tester\Assert;
+use Tracy\BlueScreen;
+
+
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -48,7 +51,8 @@ class MonologAdapterTest extends Tester\TestCase
 	protected function setUp()
 	{
 		$this->monolog = new Logger('kdyby', [$this->testHandler = new TestHandler()]);
-		$this->adapter = new MonologAdapter($this->monolog);
+		$blueScreenRenderer = new Kdyby\Monolog\Tracy\BlueScreenRenderer(TEMP_DIR, new BlueScreen());
+		$this->adapter = new MonologAdapter($this->monolog, $blueScreenRenderer);
 	}
 
 

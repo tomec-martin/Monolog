@@ -80,9 +80,17 @@ class MonologExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('adapter'))
 			->setClass('Kdyby\Monolog\Tracy\MonologAdapter', [
 				'monolog' => $this->prefix('@logger'),
-				'logDirectory' => $builder->parameters['logDir'],
+				'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
 				'email' => Debugger::$email,
 			])
+			->addTag('logger');
+
+		// The renderer has to be separate, to solve circural service dependencies
+		$builder->addDefinition($this->prefix('blueScreenRenderer'))
+			->setClass('Kdyby\Monolog\Tracy\BlueScreenRenderer', [
+				'directory' => $builder->parameters['logDir'],
+			])
+			->setAutowired(FALSE)
 			->addTag('logger');
 
 		if ($config['hookToTracy'] === TRUE && $builder->hasDefinition('tracy.logger')) {
@@ -98,9 +106,10 @@ class MonologExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$builder->addDefinition($this->prefix(self::TRACY_EXCEPTION_HANDLER_SERVICE_ID))
+		$exceptionHandlerServiceId = $this->prefix(self::TRACY_EXCEPTION_HANDLER_SERVICE_ID);
+		$builder->addDefinition($exceptionHandlerServiceId)
 			->setClass('Kdyby\Monolog\Handler\TracyExceptionHandler', [
-				'logger' => $this->prefix('@adapter'),
+				'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
 			])
 			->addTag(self::TAG_HANDLER)
 			->addTag(self::TAG_PRIORITY, 100);
@@ -134,6 +143,7 @@ class MonologExtension extends CompilerExtension
 			$builder->addDefinition($this->prefix('processor.tracyBaseUrl'))
 				->setClass('Kdyby\Monolog\Processor\TracyUrlProcessor', [
 					'baseUrl' => $config['tracyBaseUrl'],
+					'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
 				])
 				->addTag(self::TAG_PROCESSOR)
 				->addTag(self::TAG_PRIORITY, 10);

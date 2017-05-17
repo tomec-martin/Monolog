@@ -10,7 +10,7 @@
 
 namespace Kdyby\Monolog\Processor;
 
-use Kdyby\Monolog\Tracy\MonologAdapter;
+use Kdyby\Monolog\Tracy\BlueScreenRenderer;
 
 
 
@@ -23,16 +23,16 @@ class TracyUrlProcessor
 	private $baseUrl;
 
 	/**
-	 * @var \Kdyby\Monolog\Tracy\MonologAdapter
+	 * @var \Kdyby\Monolog\Tracy\BlueScreenRenderer
 	 */
-	private $logger;
+	private $blueScreenRenderer;
 
 
 
-	public function __construct($baseUrl, MonologAdapter $logger)
+	public function __construct($baseUrl, BlueScreenRenderer $blueScreenRenderer)
 	{
 		$this->baseUrl = rtrim($baseUrl, '/');
-		$this->logger = $logger;
+		$this->blueScreenRenderer = $blueScreenRenderer;
 	}
 
 
@@ -40,7 +40,7 @@ class TracyUrlProcessor
 	public function __invoke(array $record)
 	{
 		if ($this->isHandling($record)) {
-			$exceptionFile = $this->logger->getExceptionFile($record['context']['exception']);
+			$exceptionFile = $this->blueScreenRenderer->getExceptionFile($record['context']['exception']);
 			$record['context']['tracyUrl'] = sprintf('%s/%s', $this->baseUrl, basename($exceptionFile));
 		}
 

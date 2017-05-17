@@ -11,8 +11,6 @@
 namespace Kdyby\Monolog\Tracy;
 
 use Monolog;
-use Tracy\BlueScreen;
-use Tracy\Debugger;
 use Tracy\Helpers;
 use Tracy\Logger;
 
@@ -43,28 +41,36 @@ class MonologAdapter extends Logger
 	];
 
 	/**
-	 * @var Monolog\Logger
+	 * @var \Monolog\Logger
 	 */
 	private $monolog;
 
+	/**
+	 * @var \Kdyby\Monolog\Tracy\BlueScreenRenderer
+	 */
+	private $blueScreenRenderer;
 
 
-	public function __construct(Monolog\Logger $monolog, $logDirectory, $email = NULL, BlueScreen $blueScreen = NULL)
+
+	public function __construct(
+		Monolog\Logger $monolog,
+		BlueScreenRenderer $blueScreenRenderer,
+		$email = NULL
+	)
 	{
-		parent::__construct($logDirectory, $email, $blueScreen);
+		parent::__construct($blueScreenRenderer->directory, $email);
 		$this->monolog = $monolog;
+		$this->blueScreenRenderer = $blueScreenRenderer;
 	}
 
 
 
 	/**
-	 * @param \Exception|\Throwable $exception
-	 * @param string $file
-	 * @return string logged error filename
+	 * {@inheritdoc}
 	 */
-	public function renderToFile($exception, $file)
+	public function getExceptionFile($exception)
 	{
-		return parent::logException($exception, $file);
+		return $this->blueScreenRenderer->getExceptionFile($exception);
 	}
 
 
@@ -86,7 +92,7 @@ class MonologAdapter extends Logger
 			: NULL;
 
 		if ($this->email !== NULL && $this->mailer !== NULL && in_array($priority, [self::ERROR, self::EXCEPTION, self::CRITICAL], TRUE)) {
-			$this->sendEmail(implode('', [
+			$this->sendEmail(implode(' ', [
 				@date('[Y-m-d H-i-s]'),
 				$message,
 				' @ ' . Helpers::getSource(),

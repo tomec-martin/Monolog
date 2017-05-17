@@ -12,11 +12,12 @@ namespace KdybyTests\Monolog;
 
 use Kdyby;
 use Kdyby\Monolog\Handler\TracyExceptionHandler;
-use Kdyby\Monolog\Tracy\MonologAdapter;
-use Monolog\Logger;
-use Nette;
+use Kdyby\Monolog\Tracy\BlueScreenRenderer;
 use Tester;
 use Tester\Assert;
+use Tracy\BlueScreen;
+
+
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -42,7 +43,7 @@ class TracyExceptionHandlerTest extends Tester\TestCase
 
 	protected function setUp()
 	{
-		$this->monologAdapter = new MonologAdapter(new Logger('test'), TEMP_DIR);
+		$this->monologAdapter = new BlueScreenRenderer(TEMP_DIR, new BlueScreen());
 		$this->handler =  new TracyExceptionHandler($this->monologAdapter);
 	}
 
