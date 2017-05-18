@@ -67,7 +67,7 @@ class ExtensionTest extends Tester\TestCase
 
 		$dic = $this->createContainer();
 		/** @var Monolog\Logger $logger */
-		$logger = $dic->getByType('Monolog\Logger');
+		$logger = $dic->getByType(Monolog\Logger::class);
 
 		Debugger::log('tracy message 1');
 		Debugger::log('tracy message 2', 'error');
@@ -116,12 +116,12 @@ class ExtensionTest extends Tester\TestCase
 	public function testHandlersSorting()
 	{
 		$dic = $this->createContainer('handlers');
-		$logger = $dic->getByType('Monolog\Logger');
+		$logger = $dic->getByType(Monolog\Logger::class);
 		$handlers = $logger->getHandlers();
 		Assert::count(3, $handlers);
-		Assert::type('Monolog\Handler\NewRelicHandler', array_shift($handlers));
-		Assert::type('Monolog\Handler\ChromePHPHandler', array_shift($handlers));
-		Assert::type('Monolog\Handler\BrowserConsoleHandler', array_shift($handlers));
+		Assert::type(Monolog\Handler\NewRelicHandler::class, array_shift($handlers));
+		Assert::type(Monolog\Handler\ChromePHPHandler::class, array_shift($handlers));
+		Assert::type(Monolog\Handler\BrowserConsoleHandler::class, array_shift($handlers));
 	}
 
 
@@ -129,15 +129,15 @@ class ExtensionTest extends Tester\TestCase
 	public function testProcessorsSorting()
 	{
 		$dic = $this->createContainer('processors');
-		$logger = $dic->getByType('Monolog\Logger');
+		$logger = $dic->getByType(Monolog\Logger::class);
 		$processors = $logger->getProcessors();
 		Assert::count(6, $processors);
-		Assert::type('Kdyby\Monolog\Processor\TracyExceptionProcessor', array_shift($processors));
-		Assert::type('Kdyby\Monolog\Processor\PriorityProcessor', array_shift($processors));
-		Assert::type('Kdyby\Monolog\Processor\TracyUrlProcessor', array_shift($processors));
-		Assert::type('Monolog\Processor\WebProcessor', array_shift($processors));
-		Assert::type('Monolog\Processor\ProcessIdProcessor', array_shift($processors));
-		Assert::type('Monolog\Processor\GitProcessor', array_shift($processors));
+		Assert::type(Kdyby\Monolog\Processor\TracyExceptionProcessor::class, array_shift($processors));
+		Assert::type(Kdyby\Monolog\Processor\PriorityProcessor::class, array_shift($processors));
+		Assert::type(Kdyby\Monolog\Processor\TracyUrlProcessor::class, array_shift($processors));
+		Assert::type(Monolog\Processor\WebProcessor::class, array_shift($processors));
+		Assert::type(Monolog\Processor\ProcessIdProcessor::class, array_shift($processors));
+		Assert::type(Monolog\Processor\GitProcessor::class, array_shift($processors));
 	}
 
 }

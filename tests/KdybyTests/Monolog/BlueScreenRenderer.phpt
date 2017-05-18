@@ -32,7 +32,7 @@ class BlueScreenRendererTest extends Tester\TestCase
 
 		Assert::exception(function () use ($renderer) {
 			$renderer->log('message');
-		}, 'Kdyby\Monolog\NotSupportedException', 'This class is only for rendering exceptions');
+		}, Kdyby\Monolog\NotSupportedException::class, 'This class is only for rendering exceptions');
 	}
 
 }

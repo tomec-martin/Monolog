@@ -90,7 +90,7 @@ class MonologAdapterTest extends Tester\TestCase
 		Assert::same($message, $record['message']);
 		Assert::same(strtoupper($priority), $record['level_name']);
 		Assert::same($priority, $record['context']['priority']);
-		Assert::type('DateTime', $record['datetime']);
+		Assert::type(\DateTimeInterface::class, $record['datetime']);
 		Assert::match('CLI%a%: %a%/MonologAdapter.phpt%a%', $record['context']['at']);
 	}
 
