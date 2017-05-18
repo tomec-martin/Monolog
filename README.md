@@ -6,18 +6,7 @@ Kdyby/Monolog
 [![Latest stable](https://img.shields.io/packagist/v/kdyby/monolog.svg)](https://packagist.org/packages/kdyby/monolog)
 [![Coverage Status](https://coveralls.io/repos/github/Kdyby/Monolog/badge.svg?branch=master)](https://coveralls.io/github/Kdyby/Monolog?branch=master)
 
-
 Integration of [Monolog](https://github.com/Seldaek/monolog) into Nette Framework
-
-
-Requirements
-------------
-
-Kdyby/Monolog requires PHP 5.3.2 or higher.
-
-- [Nette Framework](https://github.com/nette/nette)
-- [Monolog](https://github.com/Seldaek/monolog)
-
 
 Installation
 ------------
@@ -28,13 +17,10 @@ The best way to install Kdyby/Monolog is using  [Composer](http://getcomposer.or
 $ composer require kdyby/monolog
 ```
 
-
 Documentation
 ------------
 
 Learn more in [documentation](https://github.com/Kdyby/Monolog/blob/master/docs/en/index.md).
-
-
 
 -----
 
