@@ -3,49 +3,36 @@
 /**
  * Test: Kdyby\Monolog\Processor\TracyUrlProcessor.
  *
- * @testCase KdybyTests\Monolog\TracyUrlProcessor
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Monolog
+ * @testCase
  */
 
 namespace KdybyTests\Monolog;
 
-use Kdyby;
 use Kdyby\Monolog\Processor\TracyUrlProcessor;
 use Kdyby\Monolog\Tracy\BlueScreenRenderer;
-use Tester;
 use Tester\Assert;
 use Tracy\BlueScreen;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class TracyUrlProcessorTest extends Tester\TestCase
+class TracyUrlProcessorTest extends \Tester\TestCase
 {
 
 	/**
-	 * @var Kdyby\Monolog\Tracy\BlueScreenRenderer
+	 * @var \Kdyby\Monolog\Tracy\BlueScreenRenderer
 	 */
 	private $blueScreenRenderer;
 
 	/**
-	 * @var Kdyby\Monolog\Processor\TracyUrlProcessor
+	 * @var \Kdyby\Monolog\Processor\TracyUrlProcessor
 	 */
 	private $processor;
-
-
 
 	protected function setUp()
 	{
 		$this->blueScreenRenderer = new BlueScreenRenderer(TEMP_DIR, new BlueScreen());
 		$this->processor = new TracyUrlProcessor('https://exceptions.kdyby.org', $this->blueScreenRenderer);
 	}
-
-
 
 	public function testProcessWithException()
 	{
@@ -62,8 +49,6 @@ class TracyUrlProcessorTest extends Tester\TestCase
 		Assert::same('https://exceptions.kdyby.org/' . $exceptionFile, $processed['context']['tracyUrl']);
 	}
 
-
-
 	public function testIgnoreProcessWithoutException()
 	{
 		$record = [
@@ -77,7 +62,5 @@ class TracyUrlProcessorTest extends Tester\TestCase
 	}
 
 }
-
-
 
 (new TracyUrlProcessorTest())->run();

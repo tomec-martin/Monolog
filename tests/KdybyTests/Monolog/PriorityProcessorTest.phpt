@@ -3,27 +3,17 @@
 /**
  * Test: Kdyby\Monolog\PriorityProcessor.
  *
- * @testCase KdybyTests\Monolog\PriorityProcessorTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Monolog
+ * @testCase
  */
 
 namespace KdybyTests\Monolog;
 
-use Kdyby;
 use Kdyby\Monolog\Processor\PriorityProcessor;
-use Nette;
-use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class PriorityProcessorTest extends Tester\TestCase
+class PriorityProcessorTest extends \Tester\TestCase
 {
 
 	public function dataFunctional()
@@ -85,8 +75,6 @@ class PriorityProcessorTest extends Tester\TestCase
 			],
 		];
 	}
-
-
 
 	/**
 	 * @dataProvider dataFunctional

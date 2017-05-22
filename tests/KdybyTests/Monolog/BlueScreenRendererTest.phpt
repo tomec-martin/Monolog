@@ -3,27 +3,18 @@
 /**
  * Test: Kdyby\Monolog\MonologAdapter.
  *
- * @testCase KdybyTests\Monolog\MonologAdapterTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Monolog
+ * @testCase
  */
 
 namespace KdybyTests\Monolog;
 
-use Kdyby;
 use Kdyby\Monolog\Tracy\BlueScreenRenderer;
-use Tester;
 use Tester\Assert;
 use Tracy\BlueScreen;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class BlueScreenRendererTest extends Tester\TestCase
+class BlueScreenRendererTest extends \Tester\TestCase
 {
 
 	public function testLogginIsNotSupported()
@@ -32,7 +23,7 @@ class BlueScreenRendererTest extends Tester\TestCase
 
 		Assert::exception(function () use ($renderer) {
 			$renderer->log('message');
-		}, Kdyby\Monolog\NotSupportedException::class, 'This class is only for rendering exceptions');
+		}, \Kdyby\Monolog\NotSupportedException::class, 'This class is only for rendering exceptions');
 	}
 
 }

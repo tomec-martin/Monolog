@@ -3,33 +3,23 @@
 /**
  * Test: Kdyby\Monolog\FallbackNetteHandler.
  *
- * @testCase KdybyTests\Monolog\FallbackNetteHandlerTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Monolog
+ * @testCase
  */
 
 namespace KdybyTests\Monolog;
 
-use Kdyby;
+use DateTime;
 use Kdyby\Monolog\Handler\FallbackNetteHandler;
-use Monolog;
-use Monolog\Formatter\NormalizerFormatter;
-use Nette;
-use Tester;
+use Monolog\Logger as MonologLogger;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class FallbackNetteHandlerTest extends Tester\TestCase
+class FallbackNetteHandlerTest extends \Tester\TestCase
 {
 
 	/**
-	 * @var FallbackNetteHandler
+	 * @var \Kdyby\Monolog\Handler\FallbackNetteHandler
 	 */
 	private $handler;
 
@@ -43,8 +33,6 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 	 */
 	private $logDir;
 
-
-
 	protected function setUp()
 	{
 		$this->logDir = TEMP_DIR . '/log_' . getmypid() . '_' . number_format(microtime(TRUE), 6, '+', '');
@@ -56,34 +44,30 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 
 		$this->handler = new FallbackNetteHandler('kdyby', $this->logDir);
 
-		$this->now = new \DateTime();
+		$this->now = new DateTime();
 	}
 
-
-
-	public function dataWrite_standardLevels()
+	public function dataWriteStandardLevels()
 	{
 		return [
-			[Monolog\Logger::DEBUG, 'debug'],
-			[Monolog\Logger::INFO, 'info'],
-			[Monolog\Logger::NOTICE, 'notice'],
-			[Monolog\Logger::WARNING, 'warning'],
-			[Monolog\Logger::ERROR, 'error'],
-			[Monolog\Logger::CRITICAL, 'critical'],
-			[Monolog\Logger::ALERT, 'alert'],
-			[Monolog\Logger::EMERGENCY, 'emergency'],
+			[MonologLogger::DEBUG, 'debug'],
+			[MonologLogger::INFO, 'info'],
+			[MonologLogger::NOTICE, 'notice'],
+			[MonologLogger::WARNING, 'warning'],
+			[MonologLogger::ERROR, 'error'],
+			[MonologLogger::CRITICAL, 'critical'],
+			[MonologLogger::ALERT, 'alert'],
+			[MonologLogger::EMERGENCY, 'emergency'],
 		];
 	}
 
-
-
 	/**
-	 * @dataProvider dataWrite_standardLevels
+	 * @dataProvider dataWriteStandardLevels
 	 */
-	public function testWrite_standardLevels($level, $levelName)
+	public function testWriteStandardLevels($level, $levelName)
 	{
 		$this->handler->handle([
-			'message' => "test message",
+			'message' => 'test message',
 			'context' => [],
 			'level' => $level,
 			'level_name' => strtoupper($levelName),
@@ -98,14 +82,12 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 		);
 	}
 
-
-
-	public function testWrite_customChannel()
+	public function testWriteCustomChannel()
 	{
 		$this->handler->handle([
-			'message' => "test message",
+			'message' => 'test message',
 			'context' => [],
-			'level' => Monolog\Logger::INFO,
+			'level' => MonologLogger::INFO,
 			'level_name' => 'INFO',
 			'channel' => 'nemam',
 			'datetime' => $this->now,
@@ -113,9 +95,9 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 		]);
 
 		$this->handler->handle([
-			'message' => "test message",
+			'message' => 'test message',
 			'context' => [],
-			'level' => Monolog\Logger::WARNING,
+			'level' => MonologLogger::WARNING,
 			'level_name' => 'WARNING',
 			'channel' => 'nemam',
 			'datetime' => $this->now,
@@ -129,14 +111,12 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 		);
 	}
 
-
-
-	public function testWrite_contextAsJson()
+	public function testWriteContextAsJson()
 	{
 		$this->handler->handle([
-			'message' => "test message",
+			'message' => 'test message',
 			'context' => ['at' => 'http://www.kdyby.org', 'tracy' => 'exception-2014-08-14-11-11-26-88167e58be9dc0dfd12a61b3d8d33838.html'],
-			'level' => Monolog\Logger::INFO,
+			'level' => MonologLogger::INFO,
 			'level_name' => 'INFO',
 			'channel' => 'custom',
 			'datetime' => $this->now,
@@ -149,14 +129,12 @@ class FallbackNetteHandlerTest extends Tester\TestCase
 		);
 	}
 
-
-
-	public function testWrite_extraAsJson()
+	public function testWriteExtraAsJson()
 	{
 		$this->handler->handle([
-			'message' => "test message",
+			'message' => 'test message',
 			'context' => [],
-			'level' => Monolog\Logger::INFO,
+			'level' => MonologLogger::INFO,
 			'level_name' => 'INFO',
 			'channel' => 'custom',
 			'datetime' => $this->now,
