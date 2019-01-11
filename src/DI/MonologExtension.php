@@ -25,6 +25,7 @@ use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
 use Nette\PhpGenerator\PhpLiteral;
 use Psr\Log\LoggerAwareInterface;
 use Tracy\Debugger;
+use Tracy\ILogger;
 
 /**
  * Integrates the Monolog seamlessly into your Nette Framework application.
@@ -49,6 +50,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		'tracyBaseUrl' => NULL,
 		'usePriorityProcessor' => TRUE,
 		// 'registerFallback' => TRUE,
+		'accessPriority' => ILogger::INFO,
 	];
 
 	public function loadConfiguration()
@@ -77,6 +79,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 				'monolog' => $this->prefix('@logger'),
 				'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
 				'email' => Debugger::$email,
+				'accessPriority' => $config['accessPriority'],
 			])
 			->addTag('logger');
 

@@ -46,15 +46,22 @@ class MonologAdapter extends \Tracy\Logger
 	 */
 	private $blueScreenRenderer;
 
+	/**
+	 * @var int
+	 */
+	private $accessPriority;
+
 	public function __construct(
 		MonologLogger $monolog,
 		BlueScreenRenderer $blueScreenRenderer,
-		$email = NULL
+		$email = NULL,
+		$accessPriority = self::INFO
 	)
 	{
 		parent::__construct($blueScreenRenderer->directory, $email);
 		$this->monolog = $monolog;
 		$this->blueScreenRenderer = $blueScreenRenderer;
+		$this->accessPriority = $accessPriority;
 	}
 
 	/**
@@ -90,18 +97,15 @@ class MonologAdapter extends \Tracy\Logger
 			]));
 		}
 
-		switch ($priority) {
-			case self::ACCESS:
-				$this->monolog->addInfo($message, $context);
-				break;
-
-			default:
-				$this->monolog->addRecord(
-					$this->getLevel($priority),
-					$message,
-					$context
-				);
+		if ($priority === self::ACCESS) {
+			$priority = $this->accessPriority;
 		}
+
+		$this->monolog->addRecord(
+			$this->getLevel($priority),
+			$message,
+			$context
+		);
 
 		return $exceptionFile;
 	}
