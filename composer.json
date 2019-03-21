@@ -40,10 +40,7 @@
 	"autoload": {
 		"psr-4": {
 			"Kdyby\\Monolog\\": "src/"
-		},
-		"classmap": [
-			"src/exceptions.php"
-		]
+		}
 	},
 	"autoload-dev": {
 		"psr-4": {

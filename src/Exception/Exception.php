@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Kdyby (http://www.kdyby.org)
@@ -8,14 +8,11 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
-namespace Kdyby\Monolog;
+namespace Kdyby\Monolog\Exception;
 
 interface Exception
 {
 
 }
 
-class NotSupportedException extends \LogicException implements \Kdyby\Monolog\Exception
-{
-
-}
+class_alias(\Kdyby\Monolog\Exception\Exception::class, '\Kdyby\Monolog\Exception');
