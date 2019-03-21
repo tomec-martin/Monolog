@@ -27,9 +27,9 @@ class BlueScreenRenderer extends \Tracy\Logger
 	 * @param string $file
 	 * @return string logged error filename
 	 */
-	public function renderToFile($exception, $file)
+	public function renderToFile($exception, $file): string
 	{
-		return parent::logException($exception, $file);
+		return $this->logException($exception, $file);
 	}
 
 	/**

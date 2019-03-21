@@ -43,7 +43,7 @@ class TracyUrlProcessor
 		return $record;
 	}
 
-	public function isHandling(array $record)
+	public function isHandling(array $record): bool
 	{
 		return isset($record['context']['exception'])
 			&& ($record['context']['exception'] instanceof \Throwable || $record['context']['exception'] instanceof \Exception);

@@ -15,7 +15,7 @@ use Kdyby\Monolog\Processor\TracyUrlProcessor;
 use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Handler\ChromePHPHandler;
 use Monolog\Handler\NewRelicHandler;
-use Monolog\Logger as MonologLogger;
+use Kdyby\Monolog\Logger as MonologLogger;
 use Monolog\Processor\GitProcessor;
 use Monolog\Processor\ProcessIdProcessor;
 use Monolog\Processor\WebProcessor;
@@ -60,7 +60,7 @@ class ExtensionTest extends \Tester\TestCase
 		Debugger::$logDirectory = TEMP_DIR;
 
 		$dic = $this->createContainer();
-		/** @var \Monolog\Logger $logger */
+		/** @var MonologLogger $logger */
 		$logger = $dic->getByType(MonologLogger::class);
 
 		Debugger::log('tracy message 1');

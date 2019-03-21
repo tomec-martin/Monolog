@@ -53,7 +53,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		'accessPriority' => ILogger::INFO,
 	];
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -71,11 +71,11 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('logger'))
-			->setClass(KdybyLogger::class, [$config['name']]);
+			->setFactory(KdybyLogger::class, [$config['name']]);
 
 		// Tracy adapter
 		$builder->addDefinition($this->prefix('adapter'))
-			->setClass(MonologAdapter::class, [
+			->setFactory(MonologAdapter::class, [
 				'monolog' => $this->prefix('@logger'),
 				'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
 				'email' => Debugger::$email,
@@ -85,7 +85,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 
 		// The renderer has to be separate, to solve circural service dependencies
 		$builder->addDefinition($this->prefix('blueScreenRenderer'))
-			->setClass(BlueScreenRenderer::class, [
+			->setFactory(BlueScreenRenderer::class, [
 				'directory' => $config['logDir'],
 			])
 			->setAutowired(FALSE)
@@ -101,7 +101,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		$this->loadProcessors($config);
 	}
 
-	protected function loadHandlers(array $config)
+	protected function loadHandlers(array $config): void
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -116,20 +116,20 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		}
 	}
 
-	protected function loadProcessors(array $config)
+	protected function loadProcessors(array $config): void
 	{
 		$builder = $this->getContainerBuilder();
 
 		if ($config['usePriorityProcessor'] === TRUE) {
 			// change channel name to priority if available
 			$builder->addDefinition($this->prefix('processor.priorityProcessor'))
-				->setClass(PriorityProcessor::class)
+				->setFactory(PriorityProcessor::class)
 				->addTag(self::TAG_PROCESSOR)
 				->addTag(self::TAG_PRIORITY, 20);
 		}
 
 		$builder->addDefinition($this->prefix('processor.tracyException'))
-			->setClass(TracyExceptionProcessor::class, [
+			->setFactory(TracyExceptionProcessor::class, [
 				'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
 			])
 			->addTag(self::TAG_PROCESSOR)
@@ -137,7 +137,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 
 		if ($config['tracyBaseUrl'] !== NULL) {
 			$builder->addDefinition($this->prefix('processor.tracyBaseUrl'))
-				->setClass(TracyUrlProcessor::class, [
+				->setFactory(TracyUrlProcessor::class, [
 					'baseUrl' => $config['tracyBaseUrl'],
 					'blueScreenRenderer' => $this->prefix('@blueScreenRenderer'),
 				])
@@ -156,7 +156,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		}
 	}
 
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$logger = $builder->getDefinition($this->prefix('logger'));
@@ -185,7 +185,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		}
 	}
 
-	protected function findByTagSorted($tag)
+	protected function findByTagSorted($tag): array
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -199,16 +199,16 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		return $services;
 	}
 
-	public function afterCompile(ClassTypeGenerator $class)
+	public function afterCompile(ClassTypeGenerator $class): void
 	{
 		$initialize = $class->getMethod('initialize');
 
-		if (empty(Debugger::$logDirectory)) {
+		if (Debugger::$logDirectory === null) {
 			$initialize->addBody('?::$logDirectory = ?;', [new PhpLiteral(Debugger::class), $this->config['logDir']]);
 		}
 	}
 
-	public static function register(Configurator $configurator)
+	public static function register(Configurator $configurator): void
 	{
 		$configurator->onCompile[] = function ($config, Compiler $compiler) {
 			$compiler->addExtension('monolog', new MonologExtension());
@@ -218,7 +218,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	/**
 	 * @return string
 	 */
-	private static function resolveLogDir(array $parameters)
+	private static function resolveLogDir(array $parameters): string
 	{
 		if (isset($parameters['logDir'])) {
 			return DIHelpers::expand('%logDir%', $parameters);
@@ -234,7 +234,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	/**
 	 * @param string $logDir
 	 */
-	private static function createDirectory($logDir)
+	private static function createDirectory($logDir): void
 	{
 		if (!@mkdir($logDir, 0777, TRUE) && !is_dir($logDir)) {
 			throw new \RuntimeException(sprintf('Log dir %s cannot be created', $logDir));

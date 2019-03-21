@@ -45,7 +45,7 @@ class TracyExceptionProcessor
 		return $record;
 	}
 
-	public function isHandling(array $record)
+	public function isHandling(array $record): bool
 	{
 		return !isset($record['context']['tracy'])
 			&& !isset($record['context']['tracy_filename'])
