@@ -38,7 +38,7 @@ class BlueScreenRenderer extends \Tracy\Logger
 	 */
 	public function log($message, $priority = self::INFO)
 	{
-		throw new \Kdyby\Monolog\NotSupportedException('This class is only for rendering exceptions');
+		throw new \Kdyby\Monolog\Exception\NotSupportedException('This class is only for rendering exceptions');
 	}
 
 	/**
