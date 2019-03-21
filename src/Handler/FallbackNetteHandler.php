@@ -73,7 +73,9 @@ class FallbackNetteHandler extends \Monolog\Handler\ErrorLogHandler
 	{
 		if ($this->expandNewlines) {
 			$entry = '';
-			foreach (preg_split('{[\r\n]+}', (string) $record['message']) as $line) {
+			/** @var string[] $lines */
+			$lines = preg_split('{[\r\n]+}', (string) $record['message']);
+			foreach ($lines as $line) {
 				$entry .= trim($this->getFormatter()->format(['message' => $line] + $record)) . PHP_EOL;
 			}
 
