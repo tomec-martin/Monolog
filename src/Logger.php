@@ -19,7 +19,7 @@ class Logger extends \Monolog\Logger
 	 * @param string $channel
 	 * @return CustomChannel
 	 */
-	public function channel($channel): CustomChannel
+	public function channel($channel): \Kdyby\Monolog\CustomChannel
 	{
 		return new CustomChannel($channel, $this);
 	}

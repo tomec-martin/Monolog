@@ -72,7 +72,7 @@ class MonologAdapter extends \Tracy\Logger
 		return $this->blueScreenRenderer->getExceptionFile($exception);
 	}
 
-	public function log($originalMessage, $priority = self::INFO):? string
+	public function log($originalMessage, $priority = self::INFO): ?string
 	{
 		$message = $this->formatMessage($originalMessage);
 		$context = [
@@ -111,7 +111,7 @@ class MonologAdapter extends \Tracy\Logger
 	}
 
 	/**
-	 * @param string $priority
+	 * @param mixed $priority
 	 *
 	 * @return int
 	 */

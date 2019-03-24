@@ -203,7 +203,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	{
 		$initialize = $class->getMethod('initialize');
 
-		if (Debugger::$logDirectory === null) {
+		if (Debugger::$logDirectory === NULL) {
 			$initialize->addBody('?::$logDirectory = ?;', [new PhpLiteral(Debugger::class), $this->config['logDir']]);
 		}
 	}

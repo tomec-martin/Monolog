@@ -12,8 +12,9 @@ namespace Kdyby\Monolog;
 
 use Kdyby\Monolog\Logger as KdybyLogger;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Logger as MonologLogger;
 
-class CustomChannel extends \Monolog\Logger
+class CustomChannel extends MonologLogger
 {
 
 	use \Kdyby\StrictObjects\Scream;
@@ -56,7 +57,7 @@ class CustomChannel extends \Monolog\Logger
 	/**
 	 * {@inheritdoc}
 	 */
-	public function pushProcessor($callback): \Monolog\Logger
+	public function pushProcessor($callback): MonologLogger
 	{
 		return $this->parentLogger->pushProcessor($callback);
 	}
