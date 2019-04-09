@@ -47,7 +47,7 @@ class MonologAdapter extends \Tracy\Logger
 	private $blueScreenRenderer;
 
 	/**
-	 * @var int
+	 * @var string
 	 */
 	private $accessPriority;
 
