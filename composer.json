@@ -21,7 +21,7 @@
 		"php": "^7.1  || ^7.2  || ^7.3",
 		"nette/di": "^2.4.15@dev||^3.0",
 		"kdyby/strict-objects": "^1.0",
-		"monolog/monolog": "^1.10",
+		"monolog/monolog": "^2.0",
 		"tracy/tracy": "^2.6@dev"
 	},
 	"require-dev": {

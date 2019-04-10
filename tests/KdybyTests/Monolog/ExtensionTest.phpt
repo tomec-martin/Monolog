@@ -12,6 +12,7 @@ use Kdyby\Monolog\DI\MonologExtension;
 use Kdyby\Monolog\Processor\PriorityProcessor;
 use Kdyby\Monolog\Processor\TracyExceptionProcessor;
 use Kdyby\Monolog\Processor\TracyUrlProcessor;
+use Kdyby\Monolog\Logger as MonologLogger;
 use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Handler\ChromePHPHandler;
 use Monolog\Handler\NewRelicHandler;
@@ -47,7 +48,7 @@ class ExtensionTest extends \Tester\TestCase
 	public function testServices()
 	{
 		$dic = $this->createContainer();
-		Assert::true($dic->getService('monolog.logger') instanceof \Kdyby\Monolog\Logger);
+		Assert::true($dic->getService('monolog.logger') instanceof MonologLogger);
 	}
 
 	public function testFunctional()
@@ -59,8 +60,8 @@ class ExtensionTest extends \Tester\TestCase
 		Debugger::$logDirectory = TEMP_DIR;
 
 		$dic = $this->createContainer();
-		/** @var \Kdyby\Monolog\Logger $logger */
-		$logger = $dic->getByType(\Kdyby\Monolog\Logger::class);
+		/** @var MonologLogger $logger */
+		$logger = $dic->getByType(MonologLogger::class);
 
 		Debugger::log('tracy message 1');
 		Debugger::log('tracy message 2', 'error');
@@ -107,7 +108,7 @@ class ExtensionTest extends \Tester\TestCase
 	public function testHandlersSorting()
 	{
 		$dic = $this->createContainer('handlers');
-		$logger = $dic->getByType(\Kdyby\Monolog\Logger::class);
+		$logger = $dic->getByType(MonologLogger::class);
 		$handlers = $logger->getHandlers();
 		Assert::count(3, $handlers);
 		Assert::type(NewRelicHandler::class, array_shift($handlers));
@@ -118,7 +119,7 @@ class ExtensionTest extends \Tester\TestCase
 	public function testProcessorsSorting()
 	{
 		$dic = $this->createContainer('processors');
-		$logger = $dic->getByType(\Kdyby\Monolog\Logger::class);
+		$logger = $dic->getByType(MonologLogger::class);
 		$processors = $logger->getProcessors();
 		Assert::count(6, $processors);
 		Assert::type(TracyExceptionProcessor::class, array_shift($processors));
