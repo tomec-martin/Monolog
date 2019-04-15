@@ -25,10 +25,10 @@
 		"tracy/tracy": "^2.6@dev"
 	},
 	"require-dev": {
-		"nette/application": "^2.4@dev",
-		"nette/bootstrap": "^2.4@dev",
-		"nette/caching": "^2.5@dev",
-		"nette/http": "^2.4@dev",
+		"nette/application": "^2.4@dev||^3.0",
+		"nette/bootstrap": "^2.4@dev||^3.0",
+		"nette/caching": "^2.5@dev||^3.0",
+		"nette/http": "^2.4@dev||^3.0",
 		"nette/tester": "~2.1@dev",
 		"phpstan/phpstan-shim": "^0.11.0@dev"
 	},
