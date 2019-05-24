@@ -19,6 +19,7 @@ use Kdyby\Monolog\Tracy\BlueScreenRenderer;
 use Kdyby\Monolog\Tracy\MonologAdapter;
 use Nette\Configurator;
 use Nette\DI\Compiler;
+use Nette\DI\Config\Helpers;
 use Nette\DI\Helpers as DIHelpers;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
@@ -57,7 +58,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$config = $this->getConfig($this->defaults);
+		$config = $this->validateConfig($this->defaults);
 		$config['logDir'] = self::resolveLogDir($builder->parameters);
 		self::createDirectory($config['logDir']);
 		$this->setConfig($config);
@@ -105,8 +106,9 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		foreach ($config['handlers'] as $handlerName => $implementation) {
-			Compiler::loadDefinitions($builder, [
+		foreach (array_reverse($config['handlers']) as $handlerName => $implementation) {
+
+			$this->compiler->loadDefinitionsFromConfig([
 				$serviceName = $this->prefix('handler.' . $handlerName) => $implementation,
 			]);
 
@@ -146,7 +148,8 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		}
 
 		foreach ($config['processors'] as $processorName => $implementation) {
-			Compiler::loadDefinitions($builder, [
+
+			$this->compiler->loadDefinitionsFromConfig([
 				$serviceName = $this->prefix('processor.' . $processorName) => $implementation,
 			]);
 
@@ -159,19 +162,22 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
+		/** @var Nette\DI\ServiceDefinition $logger */
 		$logger = $builder->getDefinition($this->prefix('logger'));
 
-		foreach ($handlers = $this->findByTagSorted(self::TAG_HANDLER) as $serviceName => $meta) {
-			$logger->addSetup('pushHandler', ['@' . $serviceName]);
-		}
+		$handlers = $this->findByTagSorted(self::TAG_HANDLER);
 
 		foreach ($this->findByTagSorted(self::TAG_PROCESSOR) as $serviceName => $meta) {
 			$logger->addSetup('pushProcessor', ['@' . $serviceName]);
 		}
 
-		$config = $this->getConfig(['registerFallback' => empty($handlers)] + $this->getConfig($this->defaults));
+		// This part of code used deprecated methods, that were removed in Nette 3.0
+		// Rewritten so that the output is same as before
+		$originalConfig = Helpers::merge($this->getConfig(), \Nette\DI\Helpers::expand($this->defaults, $builder->parameters));
+		/** @var array $config */
+		$config = Helpers::merge($originalConfig, \Nette\DI\Helpers::expand(['registerFallback' => empty($handlers)], $builder->parameters));
 
-		if ($config['registerFallback']) {
+		if(array_key_exists('registerFallback', $config) && !empty($config['registerFallback'])) {
 			$logger->addSetup('pushHandler', [
 				new Statement(FallbackNetteHandler::class, [
 					'appName' => $config['name'],
@@ -180,6 +186,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 			]);
 		}
 
+		/** @var Nette\DI\ServiceDefinition $service */
 		foreach ($builder->findByType(LoggerAwareInterface::class) as $service) {
 			$service->addSetup('setLogger', ['@' . $this->prefix('logger')]);
 		}
@@ -203,7 +210,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	{
 		$initialize = $class->getMethod('initialize');
 
-		if (Debugger::$logDirectory === NULL) {
+		if (Debugger::$logDirectory === NULL && isset($this->config['logDir'])) {
 			$initialize->addBody('?::$logDirectory = ?;', [new PhpLiteral(Debugger::class), $this->config['logDir']]);
 		}
 	}
