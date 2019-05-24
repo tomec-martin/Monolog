@@ -19,17 +19,17 @@
 	],
 	"require": {
 		"php": "^7.1  || ^7.2  || ^7.3",
-		"nette/di": "^2.4.15@dev||^3.0",
+		"nette/di": "^^3.0",
 		"kdyby/strict-objects": "^2.0",
 		"monolog/monolog": "^2.0",
 		"tracy/tracy": "^2.6@dev"
 	},
 	"require-dev": {
-		"nette/application": "^2.4@dev||^3.0",
-		"nette/bootstrap": "^2.4@dev||^3.0",
-		"nette/caching": "^2.5@dev||^3.0",
-		"nette/http": "^2.4@dev||^3.0",
-		"nette/tester": "~2.1@dev",
+		"nette/application": "^3.0",
+		"nette/bootstrap": "^3.0",
+		"nette/caching": "^3.0",
+		"nette/http": "^3.0",
+		"nette/tester": "^2.2",
 		"phpstan/phpstan-shim": "^0.11.0@dev"
 	},
 	"minimum-stability": "dev",
