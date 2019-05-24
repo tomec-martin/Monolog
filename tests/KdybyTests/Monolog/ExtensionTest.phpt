@@ -9,10 +9,10 @@
 namespace KdybyTests\Monolog;
 
 use Kdyby\Monolog\DI\MonologExtension;
+use Kdyby\Monolog\Logger as MonologLogger;
 use Kdyby\Monolog\Processor\PriorityProcessor;
 use Kdyby\Monolog\Processor\TracyExceptionProcessor;
 use Kdyby\Monolog\Processor\TracyUrlProcessor;
-use Kdyby\Monolog\Logger as MonologLogger;
 use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Handler\ChromePHPHandler;
 use Monolog\Handler\NewRelicHandler;
@@ -60,7 +60,7 @@ class ExtensionTest extends \Tester\TestCase
 		Debugger::$logDirectory = TEMP_DIR;
 
 		$dic = $this->createContainer();
-		/** @var MonologLogger $logger */
+		/** @var \Kdyby\Monolog\Logger $logger */
 		$logger = $dic->getByType(MonologLogger::class);
 
 		Debugger::log('tracy message 1');

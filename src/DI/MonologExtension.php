@@ -162,7 +162,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
-		/** @var Nette\DI\ServiceDefinition $logger */
+		/** @var \Nette\DI\ServiceDefinition $logger */
 		$logger = $builder->getDefinition($this->prefix('logger'));
 
 		$handlers = $this->findByTagSorted(self::TAG_HANDLER);
@@ -186,7 +186,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 			]);
 		}
 
-		/** @var Nette\DI\ServiceDefinition $service */
+		/** @var \Nette\DI\ServiceDefinition $service */
 		foreach ($builder->findByType(LoggerAwareInterface::class) as $service) {
 			$service->addSetup('setLogger', ['@' . $this->prefix('logger')]);
 		}
