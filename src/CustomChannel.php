@@ -14,7 +14,7 @@ use Kdyby\Monolog\Logger as KdybyLogger;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger as MonologLogger;
 
-class CustomChannel extends MonologLogger
+class CustomChannel extends \Kdyby\Monolog\Logger
 {
 
 	use \Kdyby\StrictObjects\Scream;
@@ -33,7 +33,7 @@ class CustomChannel extends MonologLogger
 	/**
 	 * {@inheritdoc}
 	 */
-	public function pushHandler(HandlerInterface $handler): \Monolog\Logger
+	public function pushHandler(HandlerInterface $handler): MonologLogger
 	{
 		return $this->parentLogger->pushHandler($handler);
 	}

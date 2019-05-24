@@ -173,11 +173,11 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 
 		// This part of code used deprecated methods, that were removed in Nette 3.0
 		// Rewritten so that the output is same as before
-		$originalConfig = Helpers::merge($this->getConfig(), \Nette\DI\Helpers::expand($this->defaults, $builder->parameters));
+		$originalConfig = Helpers::merge($this->getConfig(), DIHelpers::expand($this->defaults, $builder->parameters));
 		/** @var array $config */
-		$config = Helpers::merge($originalConfig, \Nette\DI\Helpers::expand(['registerFallback' => empty($handlers)], $builder->parameters));
+		$config = Helpers::merge($originalConfig, DIHelpers::expand(['registerFallback' => empty($handlers)], $builder->parameters));
 
-		if(array_key_exists('registerFallback', $config) && !empty($config['registerFallback'])) {
+		if (array_key_exists('registerFallback', $config) && !empty($config['registerFallback'])) {
 			$logger->addSetup('pushHandler', [
 				new Statement(FallbackNetteHandler::class, [
 					'appName' => $config['name'],
