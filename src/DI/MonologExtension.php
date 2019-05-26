@@ -20,6 +20,7 @@ use Kdyby\Monolog\Tracy\MonologAdapter;
 use Nette\Configurator;
 use Nette\DI\Compiler;
 use Nette\DI\Config\Helpers;
+use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Helpers as DIHelpers;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
@@ -106,11 +107,12 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		foreach (array_reverse($config['handlers']) as $handlerName => $implementation) {
+		foreach ($config['handlers'] as $handlerName => $implementation) {
 
-			$this->compiler->loadDefinitionsFromConfig([
-				$serviceName = $this->prefix('handler.' . $handlerName) => $implementation,
-			]);
+			$sd = new ServiceDefinition();
+			$sd->setFactory($implementation)->setAutowired(FALSE);
+			$serviceName = $this->prefix('handler.' . $handlerName);
+			$builder->addDefinition($serviceName, $sd);
 
 			$builder->getDefinition($serviceName)
 				->addTag(self::TAG_HANDLER)
@@ -165,7 +167,9 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 		/** @var \Nette\DI\ServiceDefinition $logger */
 		$logger = $builder->getDefinition($this->prefix('logger'));
 
-		$handlers = $this->findByTagSorted(self::TAG_HANDLER);
+		foreach ($handlers = $this->findByTagSorted(self::TAG_HANDLER) as $serviceName => $meta) {
+			$logger->addSetup('pushHandler', ['@' . $serviceName]);
+		}
 
 		foreach ($this->findByTagSorted(self::TAG_PROCESSOR) as $serviceName => $meta) {
 			$logger->addSetup('pushProcessor', ['@' . $serviceName]);
