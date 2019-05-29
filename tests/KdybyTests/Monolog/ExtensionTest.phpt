@@ -197,7 +197,6 @@ class ExtensionTest extends \Tester\TestCase
 		$channel->emerg('custom channel message 19');
 		$channel->emergency('custom channel message 20');
 
-
 		Assert::match(
 			'[%a%] INFO: custom channel message 1 [] []' . "\n" .
 			'[%a%] ERROR: custom channel message 2 [] []' . "\n" .
@@ -221,8 +220,6 @@ class ExtensionTest extends \Tester\TestCase
 			'[%a%] EMERGENCY: custom channel message 20 [] []' . "\n",
 			file_get_contents(TEMP_DIR . '/test.log')
 		);
-
-
 	}
 
 	public function testHandlersSorting()
