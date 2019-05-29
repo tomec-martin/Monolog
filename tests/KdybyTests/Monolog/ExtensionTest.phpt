@@ -169,9 +169,60 @@ class ExtensionTest extends \Tester\TestCase
 
 		Assert::count(4, glob(TEMP_DIR . '/exception-*.html'));
 
+		// TEST FOR CUSTOM CHANNEL
+
 		$channel = $logger->channel('test');
 		Assert::type('Kdyby\Monolog\CustomChannel', $channel);
 		Assert::match('test', $channel->getName());
+
+		$channel->addInfo('custom channel message 1');
+		$channel->addError('custom channel message 2');
+		$channel->addWarning('custom channel message 3');
+		$channel->addDebug('custom channel message 4');
+		$channel->addNotice('custom channel message 5');
+		$channel->addCritical('custom channel message 6');
+		$channel->addAlert('custom channel message 7');
+		$channel->addEmergency('custom channel message 8');
+
+		$channel->debug('custom channel message 9');
+		$channel->info('custom channel message 10');
+		$channel->notice('custom channel message 11');
+		$channel->warn('custom channel message 12');
+		$channel->warning('custom channel message 13');
+		$channel->err('custom channel message 14');
+		$channel->error('custom channel message 15');
+		$channel->crit('custom channel message 16');
+		$channel->critical('custom channel message 17');
+		$channel->alert('custom channel message 18');
+		$channel->emerg('custom channel message 19');
+		$channel->emergency('custom channel message 20');
+
+
+		Assert::match(
+			'[%a%] INFO: custom channel message 1 [] []' . "\n" .
+			'[%a%] ERROR: custom channel message 2 [] []' . "\n" .
+			'[%a%] WARNING: custom channel message 3 [] []' . "\n" .
+			'[%a%] DEBUG: custom channel message 4 [] []' . "\n" .
+			'[%a%] NOTICE: custom channel message 5 [] []' . "\n" .
+			'[%a%] CRITICAL: custom channel message 6 [] []' . "\n" .
+			'[%a%] ALERT: custom channel message 7 [] []' . "\n" .
+			'[%a%] EMERGENCY: custom channel message 8 [] []' . "\n" .
+			'[%a%] DEBUG: custom channel message 9 [] []' . "\n" .
+			'[%a%] INFO: custom channel message 10 [] []' . "\n" .
+			'[%a%] NOTICE: custom channel message 11 [] []' . "\n" .
+			'[%a%] WARNING: custom channel message 12 [] []' . "\n" .
+			'[%a%] WARNING: custom channel message 13 [] []' . "\n" .
+			'[%a%] ERROR: custom channel message 14 [] []' . "\n" .
+			'[%a%] ERROR: custom channel message 15 [] []' . "\n" .
+			'[%a%] CRITICAL: custom channel message 16 [] []' . "\n" .
+			'[%a%] CRITICAL: custom channel message 17 [] []' . "\n" .
+			'[%a%] ALERT: custom channel message 18 [] []' . "\n" .
+			'[%a%] EMERGENCY: custom channel message 19 [] []' . "\n" .
+			'[%a%] EMERGENCY: custom channel message 20 [] []' . "\n",
+			file_get_contents(TEMP_DIR . '/test.log')
+		);
+
+
 	}
 
 	public function testHandlersSorting()
