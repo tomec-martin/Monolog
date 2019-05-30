@@ -20,7 +20,6 @@ use Kdyby\Monolog\Tracy\MonologAdapter;
 use Nette\Configurator;
 use Nette\DI\Compiler;
 use Nette\DI\Config\Helpers;
-use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Helpers as DIHelpers;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
@@ -109,12 +108,9 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 
 		foreach ($config['handlers'] as $handlerName => $implementation) {
 
-			$sd = new ServiceDefinition();
-			$sd->setFactory($implementation)->setAutowired(FALSE);
-			$serviceName = $this->prefix('handler.' . $handlerName);
-			$builder->addDefinition($serviceName, $sd);
-
-			$builder->getDefinition($serviceName)
+			$builder->addDefinition($this->prefix('handler.' . $handlerName))
+				->setFactory($implementation)
+				->setAutowired(FALSE)
 				->addTag(self::TAG_HANDLER)
 				->addTag(self::TAG_PRIORITY, is_numeric($handlerName) ? $handlerName : 0);
 		}
