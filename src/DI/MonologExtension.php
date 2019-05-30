@@ -17,13 +17,15 @@ use Kdyby\Monolog\Processor\TracyExceptionProcessor;
 use Kdyby\Monolog\Processor\TracyUrlProcessor;
 use Kdyby\Monolog\Tracy\BlueScreenRenderer;
 use Kdyby\Monolog\Tracy\MonologAdapter;
+use Nette;
 use Nette\Configurator;
 use Nette\DI\Compiler;
-use Nette\DI\Config\Helpers;
 use Nette\DI\Helpers as DIHelpers;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
 use Nette\PhpGenerator\PhpLiteral;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 use Psr\Log\LoggerAwareInterface;
 use Tracy\Debugger;
 use Tracy\ILogger;
@@ -40,28 +42,29 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	const TAG_PROCESSOR = 'monolog.processor';
 	const TAG_PRIORITY = 'monolog.priority';
 
-	/**
-	 * @var mixed[]
-	 */
-	private $defaults = [
-		'handlers' => [],
-		'processors' => [],
-		'name' => 'app',
-		'hookToTracy' => TRUE,
-		'tracyBaseUrl' => NULL,
-		'usePriorityProcessor' => TRUE,
-		// 'registerFallback' => TRUE,
-		'accessPriority' => ILogger::INFO,
-	];
+	/** @var array */
+	protected $config = [];
+
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'handlers' => Expect::anyOf(Expect::arrayOf('Nette\DI\Definitions\Statement'), 'false')->default([]),
+			'processors' => Expect::anyOf(Expect::arrayOf('Nette\DI\Definitions\Statement'), 'false')->default([]),
+			'name' => Expect::string('app'),
+			'hookToTracy' => Expect::bool(TRUE),
+			'tracyBaseUrl' => Expect::string(),
+			'usePriorityProcessor' => Expect::bool(TRUE),
+			'accessPriority' => Expect::string(ILogger::INFO),
+			'logDir' => Expect::string(),
+		])->castTo('array');
+	}
 
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
-
-		$config = $this->validateConfig($this->defaults);
-		$config['logDir'] = self::resolveLogDir($builder->parameters);
+		$this->config['logDir'] = self::resolveLogDir($builder->parameters);
+		$config = $this->config;
 		self::createDirectory($config['logDir']);
-		$this->setConfig($config);
 
 		if (!isset($builder->parameters[$this->name]) || (is_array($builder->parameters[$this->name]) && !isset($builder->parameters[$this->name]['name']))) {
 			$builder->parameters[$this->name]['name'] = $config['name'];
@@ -100,6 +103,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 
 		$this->loadHandlers($config);
 		$this->loadProcessors($config);
+		$this->setConfig($config);
 	}
 
 	protected function loadHandlers(array $config): void
@@ -171,17 +175,15 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 			$logger->addSetup('pushProcessor', ['@' . $serviceName]);
 		}
 
-		// This part of code used deprecated methods, that were removed in Nette 3.0
-		// Rewritten so that the output is same as before
-		$originalConfig = Helpers::merge($this->getConfig(), DIHelpers::expand($this->defaults, $builder->parameters));
-		/** @var array $config */
-		$config = Helpers::merge($originalConfig, DIHelpers::expand(['registerFallback' => empty($handlers)], $builder->parameters));
+		if (empty($handlers) && !array_key_exists('registerFallback', $this->config)) {
+			$this->config['registerFallback'] = TRUE;
+		}
 
-		if (array_key_exists('registerFallback', $config) && !empty($config['registerFallback'])) {
+		if (array_key_exists('registerFallback', $this->config) && !empty($this->config['registerFallback'])) {
 			$logger->addSetup('pushHandler', [
 				new Statement(FallbackNetteHandler::class, [
-					'appName' => $config['name'],
-					'logDir' => $config['logDir'],
+					'appName' => $this->config['name'],
+					'logDir' => $this->config['logDir'],
 				]),
 			]);
 		}
@@ -210,7 +212,7 @@ class MonologExtension extends \Nette\DI\CompilerExtension
 	{
 		$initialize = $class->getMethod('initialize');
 
-		if (Debugger::$logDirectory === NULL && isset($this->config['logDir'])) {
+		if (Debugger::$logDirectory === NULL && array_key_exists('logDir', $this->config)) {
 			$initialize->addBody('?::$logDirectory = ?;', [new PhpLiteral(Debugger::class), $this->config['logDir']]);
 		}
 	}
