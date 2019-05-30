@@ -57,7 +57,7 @@ class CustomChannel extends \Kdyby\Monolog\Logger
 	/**
 	 * {@inheritdoc}
 	 */
-	public function pushProcessor($callback): MonologLogger
+	public function pushProcessor(callable $callback): MonologLogger
 	{
 		return $this->parentLogger->pushProcessor($callback);
 	}
@@ -195,7 +195,7 @@ class CustomChannel extends \Kdyby\Monolog\Logger
 	 *
 	 * @return bool Whether the record has been processed
 	 */
-	public function isHandling($level): bool
+	public function isHandling(int $level): bool
 	{
 		return $this->parentLogger->isHandling($level);
 	}
