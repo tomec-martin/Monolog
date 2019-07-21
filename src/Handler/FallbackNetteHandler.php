@@ -52,7 +52,7 @@ class FallbackNetteHandler extends \Monolog\Handler\ErrorLogHandler
 		$this->priorityFormatter = new LineFormatter('[%datetime%] %level_name%: %message% %context% %extra%');
 	}
 
-	public function handle(array $record)
+	public function handle(array $record): bool
 	{
 		if ($record['channel'] === $this->appName) {
 			$this->setFormatter($this->defaultFormatter);
@@ -69,7 +69,7 @@ class FallbackNetteHandler extends \Monolog\Handler\ErrorLogHandler
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function write(array $record)
+	protected function write(array $record): void
 	{
 		if ($this->expandNewlines) {
 			$entry = '';

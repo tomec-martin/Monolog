@@ -18,7 +18,7 @@ class NewRelicHandler extends \Monolog\Handler\NewRelicHandler
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function write(array $record)
+	protected function write(array $record): void
 	{
 		if (!$this->isNewRelicEnabled()) {
 			return;
@@ -30,7 +30,7 @@ class NewRelicHandler extends \Monolog\Handler\NewRelicHandler
 	/**
 	 * {@inheritdoc}
 	 */
-	public function isHandling(array $record)
+	public function isHandling(array $record): bool
 	{
 		if (!$this->isNewRelicEnabled()) {
 			return FALSE;

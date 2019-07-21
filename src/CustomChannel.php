@@ -12,8 +12,9 @@ namespace Kdyby\Monolog;
 
 use Kdyby\Monolog\Logger as KdybyLogger;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Logger as MonologLogger;
 
-class CustomChannel extends \Monolog\Logger
+class CustomChannel extends \Kdyby\Monolog\Logger
 {
 
 	use \Kdyby\StrictObjects\Scream;
@@ -32,15 +33,15 @@ class CustomChannel extends \Monolog\Logger
 	/**
 	 * {@inheritdoc}
 	 */
-	public function pushHandler(HandlerInterface $handler)
+	public function pushHandler(HandlerInterface $handler): MonologLogger
 	{
-		$this->parentLogger->pushHandler($handler);
+		return $this->parentLogger->pushHandler($handler);
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function popHandler()
+	public function popHandler(): HandlerInterface
 	{
 		return $this->parentLogger->popHandler();
 	}
@@ -48,7 +49,7 @@ class CustomChannel extends \Monolog\Logger
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getHandlers()
+	public function getHandlers(): array
 	{
 		return $this->parentLogger->getHandlers();
 	}
@@ -56,39 +57,137 @@ class CustomChannel extends \Monolog\Logger
 	/**
 	 * {@inheritdoc}
 	 */
-	public function pushProcessor($callback)
+	public function pushProcessor(callable $callback): MonologLogger
 	{
-		$this->parentLogger->pushProcessor($callback);
+		return $this->parentLogger->pushProcessor($callback);
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return callable
 	 */
-	public function popProcessor()
+	public function popProcessor(): callable
 	{
 		return $this->parentLogger->popProcessor();
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return callable[]
 	 */
-	public function getProcessors()
+	public function getProcessors(): array
 	{
 		return $this->parentLogger->getProcessors();
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function addRecord($level, $message, array $context = [])
+	public function addRecord(int $level, string $message, array $context = []): bool
 	{
-		return $this->parentLogger->addRecord($level, $message, ['channel' => $this->name] + $context);
+		return $this->parentLogger->addRecord($level, $message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the DEBUG level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function addDebug($message, array $context = []): void
+	{
+		$this->parentLogger->debug($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the INFO level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function addInfo($message, array $context = []): void
+	{
+		$this->parentLogger->info($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the NOTICE level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function addNotice($message, array $context = []): void
+	{
+		$this->parentLogger->notice($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the WARNING level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function addWarning($message, array $context = []): void
+	{
+		$this->parentLogger->warning($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the ERROR level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function addError($message, array $context = []): void
+	{
+		$this->parentLogger->error($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the CRITICAL level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function addCritical($message, array $context = []): void
+	{
+		$this->parentLogger->critical($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the ALERT level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function addAlert($message, array $context = []): void
+	{
+		$this->parentLogger->alert($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the EMERGENCY level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function addEmergency($message, array $context = []): void
+	{
+		$this->parentLogger->emergency($message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
@@ -96,219 +195,133 @@ class CustomChannel extends \Monolog\Logger
 	 *
 	 * @return bool Whether the record has been processed
 	 */
-	public function addDebug($message, array $context = [])
-	{
-		return $this->parentLogger->addDebug($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function addInfo($message, array $context = [])
-	{
-		return $this->parentLogger->addInfo($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function addNotice($message, array $context = [])
-	{
-		return $this->parentLogger->addNotice($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function addWarning($message, array $context = [])
-	{
-		return $this->parentLogger->addWarning($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function addError($message, array $context = [])
-	{
-		return $this->parentLogger->addError($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function addCritical($message, array $context = [])
-	{
-		return $this->parentLogger->addCritical($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function addAlert($message, array $context = [])
-	{
-		return $this->parentLogger->addAlert($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function addEmergency($message, array $context = [])
-	{
-		return $this->parentLogger->addEmergency($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function isHandling($level)
+	public function isHandling(int $level): bool
 	{
 		return $this->parentLogger->isHandling($level);
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function log($level, $message, array $context = [])
+	public function log($level, $message, array $context = []): void
 	{
-		return $this->parentLogger->log($level, $message, ['channel' => $this->name] + $context);
+		$this->parentLogger->log($level, $message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function debug($message, array $context = [])
+	public function debug($message, array $context = []): void
 	{
-		return $this->parentLogger->debug($message, ['channel' => $this->name] + $context);
+		$this->parentLogger->debug($message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function info($message, array $context = [])
+	public function info($message, array $context = []): void
 	{
-		return $this->parentLogger->info($message, ['channel' => $this->name] + $context);
+		$this->parentLogger->info($message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function notice($message, array $context = [])
+	public function notice($message, array $context = []): void
 	{
-		return $this->parentLogger->notice($message, ['channel' => $this->name] + $context);
+		$this->parentLogger->notice($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the WARNING level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function warn($message, array $context = []): void
+	{
+		$this->parentLogger->warning($message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function warn($message, array $context = [])
+	public function warning($message, array $context = []): void
 	{
-		return $this->parentLogger->warn($message, ['channel' => $this->name] + $context);
+		$this->parentLogger->warning($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the ERROR level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function err($message, array $context = []): void
+	{
+		$this->parentLogger->error($message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function warning($message, array $context = [])
+	public function error($message, array $context = []): void
 	{
-		return $this->parentLogger->warning($message, ['channel' => $this->name] + $context);
+		$this->parentLogger->error($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the CRITICAL level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function crit($message, array $context = []): void
+	{
+		$this->parentLogger->critical($message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function err($message, array $context = [])
+	public function critical($message, array $context = []): void
 	{
-		return $this->parentLogger->err($message, ['channel' => $this->name] + $context);
+		$this->parentLogger->critical($message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function error($message, array $context = [])
+	public function alert($message, array $context = []): void
 	{
-		return $this->parentLogger->error($message, ['channel' => $this->name] + $context);
+		$this->parentLogger->alert($message, array_merge(['channel' => $this->name], $context));
+	}
+
+	/**
+	 * Adds a log record at the EMERGENCY level.
+	 *
+	 * This method allows for compatibility with common interfaces.
+	 *
+	 * @param string $message The log message
+	 * @param array  $context The log context
+	 */
+	public function emerg($message, array $context = []): void
+	{
+		$this->parentLogger->emergency($message, array_merge(['channel' => $this->name], $context));
 	}
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
 	 */
-	public function crit($message, array $context = [])
+	public function emergency($message, array $context = []): void
 	{
-		return $this->parentLogger->crit($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function critical($message, array $context = [])
-	{
-		return $this->parentLogger->critical($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function alert($message, array $context = [])
-	{
-		return $this->parentLogger->alert($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function emerg($message, array $context = [])
-	{
-		return $this->parentLogger->emerg($message, ['channel' => $this->name] + $context);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return bool Whether the record has been processed
-	 */
-	public function emergency($message, array $context = [])
-	{
-		return $this->parentLogger->emergency($message, ['channel' => $this->name] + $context);
+		$this->parentLogger->emergency($message, array_merge(['channel' => $this->name], $context));
 	}
 
 }
